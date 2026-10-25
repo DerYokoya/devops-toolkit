@@ -1,0 +1,221 @@
+name: Generate Project Issues
+
+on:
+  workflow_dispatch: # Allows for triggering manually
+
+permissions:
+  issues: write
+
+jobs:
+  create_issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Bash Scripting Issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 1. Log rotator
+          gh issue create --title "Bash: Log rotator" --label "bash,automation" --body "### Goal
+          Compresses and archives logs older than a set number of days and deletes the oldest ones.
+          
+          ### Checklist
+          - [ ] Set up threshold for log age (in days)
+          - [ ] Implement compression (gzip/tar)
+          - [ ] Implement deletion logic for expired archives
+          - [ ] Add error logging"
+
+          # 2. Backup script
+          gh issue create --title "Bash: Backup script" --label "bash,automation" --body "### Goal
+          Copies a project folder to a timestamped archive and keeps only the last N backups.
+          
+          ### Checklist
+          - [ ] Generate unique timestamped archive name
+          - [ ] Copy and compress target project folder
+          - [ ] Enforce retention limit (keep only last N backups)
+          - [ ] Verify backup integrity"
+
+          # 3. Disk and memory monitor
+          gh issue create --title "Bash: Disk and memory monitor" --label "bash,automation" --body "### Goal
+          Checks resource usage on a schedule and alerts you when it passes a set threshold.
+          
+          ### Checklist
+          - [ ] Parse output from \`df\` and \`free\`
+          - [ ] Set customizable warning/critical thresholds
+          - [ ] Implement alert system (e.g., stdout, log, email, or webhook)
+          - [ ] Configure to run via cron schedule"
+
+          # 4. Failed login detector
+          gh issue create --title "Bash: Failed login detector" --label "bash,security" --body "### Goal
+          Scans authentication logs for repeated failed SSH attempts and lists the offending IPs.
+          
+          ### Checklist
+          - [ ] Target system auth logs (e.g., \`/var/log/auth.log\` or \`secure\`)
+          - [ ] Extract IP addresses using awk/grep/sed
+          - [ ] Aggregate failure counts per IP
+          - [ ] Output a clean list of top offending IPs"
+
+          # 5. Deploy script
+          gh issue create --title "Bash: Deploy script" --label "bash,devops" --body "### Goal
+          Pulls the latest code, installs dependencies, runs database migrations, and restarts the system service.
+          
+          ### Checklist
+          - [ ] Pull latest changes from target branch
+          - [ ] Run dependency installation step securely
+          - [ ] Trigger database migration command
+          - [ ] Gracefully restart system service (e.g., systemd/pm2)
+          - [ ] Add rollback logic if any step fails"
+
+          # 6. Stale branch cleaner
+          gh issue create --title "Bash: Stale branch cleaner" --label "bash,git" --body "### Goal
+          Finds and deletes Git branches that are already merged or untouched for months.
+          
+          ### Checklist
+          - [ ] Fetch latest remote branch data
+          - [ ] Identify fully merged branches safely
+          - [ ] Filter unmerged branches by age (last commit date)
+          - [ ] Create a interactive confirmation step or Dry-Run flag before deleting remote branches"
+
+          # 7. Pre-commit checker
+          gh issue create --title "Bash: Pre-commit checker" --label "bash,git" --body "### Goal
+          Runs the linter and test suite before each commit and blocks the commit if anything fails.
+          
+          ### Checklist
+          - [ ] Wire up script to run as a native Git \`pre-commit\` hook
+          - [ ] Target staging area changes or whole codebase
+          - [ ] Run linter; capture exit status
+          - [ ] Run tests; capture exit status
+          - [ ] Block commit with explicit error message if any check fails"
+
+          # 8. Environment checker
+          gh issue create --title "Bash: Environment checker" --label "bash,dx" --body "### Goal
+          Verifies that required tool binaries, versions, and environment variables are properly set before a project boots.
+          
+          ### Checklist
+          - [ ] Validate presence of required binaries (e.g., node, python, docker)
+          - [ ] Compare minimum version numbers
+          - [ ] Assert mandatory \`.env\` variables exist and are populated
+          - [ ] Provide clear diagnostic output for missing dependencies"
+
+          # 9. Package updater
+          gh issue create --title "Bash: Package updater" --label "bash,security" --body "### Goal
+          Lists outdated system packages and flags the ones with known vulnerabilities.
+          
+          ### Checklist
+          - [ ] Refresh system package manager indices
+          - [ ] Evaluate available updates
+          - [ ] Cross-reference or flag security-related updates if supported by package manager
+          - [ ] Format output as a human-readable summary report"
+
+          # 10. Cron job auditor
+          gh issue create --title "Bash: Cron job auditor" --label "bash,automation" --body "### Goal
+          Lists all scheduled jobs on a machine and flags any that failed or haven’t run recently.
+          
+          ### Checklist
+          - [ ] Read all system and user crontabs
+          - [ ] Correlate jobs against system logs to verify recent execution timestamps
+          - [ ] Detect and flag failed execution codes
+          - [ ] Generate an audit dashboard output"
+
+          # 11. User account provisioner
+          gh issue create --title "Bash: User account provisioner" --label "bash,security" --body "### Goal
+          Creates users, sets standard permissions, and adds public SSH keys from a single batch source list.
+          
+          ### Checklist
+          - [ ] Accept and parse an input array/list of usernames
+          - [ ] Create user homes and default shells securely
+          - [ ] Generate configuration folders and append provided public SSH keys
+          - [ ] Enforce permission hardening (\`chmod 700 / 600\`) on SSH keys"
+
+      - name: Create Python Scripting Issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 12. Log analyzer
+          gh issue create --title "Python: Log analyzer" --label "python,data" --body "### Goal
+          Parses application logs and produces a daily summary of error counts, slowest endpoints, and top errors.
+          
+          ### Checklist
+          - [ ] Parse log formats (JSON or Regex pattern matching)
+          - [ ] Calculate overall error rate and slice by error types
+          - [ ] Track response times to surface slowest API paths
+          - [ ] Output structural telemetry summary"
+
+          # 13. API report generator
+          gh issue create --title "Python: API report generator" --label "python,data" --body "### Goal
+          Pulls data from an external REST API endpoint and transforms it into a clean CSV or formatted weekly report.
+          
+          ### Checklist
+          - [ ] Integrate \`requests\` or modern HTTP client package
+          - [ ] Handle API authentication and pagination loops safely
+          - [ ] Parse JSON payloads into relational data structures
+          - [ ] Export directly into cleanly-formatted CSV/Excel output"
+
+          # 14. CSV cleaner
+          gh issue create --title "Python: CSV cleaner" --label "python,data" --body "### Goal
+          Removes duplicates, standardizes data formats, and flags missing values in a messy data file.
+          
+          ### Checklist
+          - [ ] Read messy CSV input files (via standard library or pandas)
+          - [ ] Identify and drop duplicate rows reliably
+          - [ ] Standardize date strings or malformed records
+          - [ ] Log or isolate lines containing empty/null target properties"
+
+          # 15. Service health checker
+          gh issue create --title "Python: Service health checker" --label "python,automation" --body "### Goal
+          Pings a list of URLs or ports and reports which infrastructure pieces are unresponsive.
+          
+          ### Checklist
+          - [ ] Maintain an explicit tracking list of URLs/IPs/Ports
+          - [ ] Dispatch parallel or async HTTP requests/socket connections
+          - [ ] Record status codes, latencies, and connection timeout states
+          - [ ] Render a consolidated uptime status breakdown"
+
+          # 16. SSL certificate expiry checker
+          gh issue create --title "Python: SSL certificate expiry checker" --label "python,security" --body "### Goal
+          Queries target web domains and warns you ahead of time when any SSL certificates are close to expiring.
+          
+          ### Checklist
+          - [ ] Establish socket connections to target endpoints over port 443
+          - [ ] Retrieve and decode SSL certificate payload schemas
+          - [ ] Calculate remaining lifespan days against the current date
+          - [ ] Trigger warning indicators for items under the target day count"
+
+          # 17. Duplicate file finder
+          gh issue create --title "Python: Duplicate file finder" --label "python,automation" --body "### Goal
+          Hashes file arrays in a target directory tree and isolates matching identical files.
+          
+          ### Checklist
+          - [ ] Deep-traverse directory trees recursively
+          - [ ] Compare file sizes first to optimize performance
+          - [ ] Calculate unique cryptographic hashes (MD5/SHA256) for size-matching files
+          - [ ] Group results to show duplicate file pathways clearly"
+
+          # 18. Bulk file renamer/organizer
+          gh issue create --title "Python: Bulk file renamer/organizer" --label "python,automation" --body "### Goal
+          Sorts a messy folder layout into structured subfolders organized strictly by file type extension or creation date.
+          
+          ### Checklist
+          - [ ] Scan specified source folders
+          - [ ] Parse target sorting rules (file extensions or OS creation metadata)
+          - [ ] Create missing destination subdirectories dynamically
+          - [ ] Safely move or rename files while handling naming collisions gracefully"
+
+          # 19. Project bootstrapper
+          gh issue create --title "Python: Project bootstrapper" --label "python,dx" --body "### Goal
+          Instantly seeds a pristine code repo with a standardized folder framework, custom .gitignore, README, and unit testing boilerplate.
+          ### Checklist
+
+          - [ ] Build boilerplate templates or string skeletons internally
+          - [ ] Scaffold folder architectures reliably using `pathlib` or `os`
+          - [ ] Output matching project components (`README.md`, `.gitignore`, test directories)
+          - [ ] (Optional) Initialize a local git repo within the targeted folder scope"
+
+          # 20. Database backup and restore (Python Showcase Option)
+          gh issue create --title "Python: Database backup and restore tool" --label "python,database" --body "### Goal
+          Automates structural PostgreSQL dumps via a robust Python wrapper to support granular handling, error logging, and verified test restores.
+          ### Checklist
+
+          - [ ] Execute background system database dumps natively via subprocess calls safely
+          - [ ] Catch database failures or connectivity timeouts cleanly using Python Exception try/except chains
+          - [ ] Implement compressed storage destinations with unique filenames
+          - [ ] Provide a target command framework to invoke database rebuild/restoration flows"
