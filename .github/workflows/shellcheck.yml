@@ -1,0 +1,24 @@
+name: ShellCheck
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        run: |
+          # ShellCheck is preinstalled on ubuntu-latest runners
+          shellcheck --version
+
+          # Lint every .sh file in the repo (skips .git); -r means do nothing if none exist
+          find . -type f -name "*.sh" -not -path "./.git/*" -print0 \
+            | xargs -0 -r shellcheck --severity=style --external-sources
