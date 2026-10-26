@@ -4,6 +4,8 @@
 
 A collection of small Bash and Python scripts that automate repetitive system, deployment, and monitoring tasks. Bash handles quick command-line glue work, and Python handles anything that needs parsing, APIs, or real error handling.
 
+![CI](https://github.com/DerYokoya/devops-toolkit/actions/workflows/ci.yml/badge.svg?branch=main)
+
 ## Why this exists
 
 Manual, repetitive tasks are slow and error-prone. Each script here replaces one of them with something repeatable, logged, and safe to run on a schedule.
