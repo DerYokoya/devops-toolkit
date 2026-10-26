@@ -20,7 +20,8 @@ devops-toolkit/
 ├── requirements.txt
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                  # ShellCheck + pytest on every push
+│       ├── shellcheck.yml                # ShellCheck every push
+│       └── python.yml                    # Ruff checks on every push
 ├── bash/
 │   ├── backup/
 │   │   ├── backup.sh
