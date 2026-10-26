@@ -36,6 +36,47 @@ missing_env=0   # missing or empty env vars
 # Helpers
 # =========================================================================
 
+usage() {
+    cat <<'EOF'
+Usage: env-check.sh [-h|--help]
+
+Checks that the required development and deployment tools are installed,
+meet their minimum versions, and that required variables are set in ./.env.
+
+Tools checked:
+  node       >= 20.0.0
+  python3    >= 3.9
+  npm        >= 10.0.0
+  git        >= 2.40.0
+  docker     >= 25.0.0
+  pip        >= 23.0.0
+  tsc        >= 5.0.0
+  yarn       >= 1.22.0
+
+Required .env variables:
+  NODE_ENV
+  DATABASE_URL
+  API_KEY
+
+Note:
+    The script checks .env relative to the directory from which it is
+    launched, not relative to the script's own directory.
+
+Options:
+  -h, --help    Show this help message and exit.
+
+Exit status:
+  0    All checks passed.
+  1    One or more tools are missing/outdated, or .env variables are missing.
+  2    Invalid command-line usage.
+
+Example (run from the repository root):
+  chmod +x bash/deployment/env-check.sh    # once, to make it executable
+  ./bash/deployment/env-check.sh --help
+  ./bash/deployment/env-check.sh
+EOF
+}
+
 # Extract a bare dotted version from a tool's --version output.
 # Formats differ per tool, so extraction is per-tool; comparison is shared.
 get_version() {
@@ -61,6 +102,19 @@ get_version() {
 version_ge() {
     [[ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -n1)" == "$2" ]]
 }
+
+# =========================================================================
+# Arguments
+# =========================================================================
+case "${1:-}" in # ${1:-} means "if $1 is unset or empty, use an empty string"
+    # if the argument is -h or --help, call the usage function and
+    # exit with status 0 (success).
+    -h|--help) usage; exit 0 ;; 
+    "")        ;; # if the argument is an empty string, do nothing in this branch.
+    # if the argument is anything else, print an error message to stderr,
+    # call the usage function, and exit with status 2 (incorrect usage).
+    *)         echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
+esac
 
 # =========================================================================
 # 1. Binaries present?
