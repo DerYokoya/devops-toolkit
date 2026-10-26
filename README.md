@@ -32,7 +32,7 @@ devops-toolkit/
 │   │   └── cron-audit.sh
 │   ├── deployment/
 │   │   ├── deploy.sh
-│   │   └── env-check.sh
+│   │   └── env-check.sh ✅
 │   ├── git/
 │   │   ├── stale-branch-cleaner.sh
 │   │   └── pre-commit-check.sh
