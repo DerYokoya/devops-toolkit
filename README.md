@@ -4,7 +4,7 @@
 
 A collection of small Bash and Python scripts that automate repetitive system, deployment, and monitoring tasks. Bash handles quick command-line glue work, and Python handles anything that needs parsing, APIs, or real error handling.
 
-![CI](https://github.com/DerYokoya/devops-toolkit/actions/workflows/ci.yml/badge.svg?branch=main)
+![Shell Check](https://github.com/DerYokoya/devops-toolkit/actions/workflows/shellcheck.yml/badge.svg?branch=main)
 
 ## Why this exists
 
