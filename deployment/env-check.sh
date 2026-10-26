@@ -39,6 +39,10 @@ missing_env=0   # missing or empty env vars
 # Extract a bare dotted version from a tool's --version output.
 # Formats differ per tool, so extraction is per-tool; comparison is shared.
 get_version() {
+    # sed and awk are used to extract the version number from the output of
+    # the --version command for each tool. The case statement handles each tool
+    # separately, as their version output formats can vary significantly.
+    # if none of the specific cases match, it falls back to a generic extraction method.
     case "$1" in
         node)    node    --version 2>/dev/null | sed 's/^v//' ;;
         python3) python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")' ;;
