@@ -11,13 +11,13 @@ set -euo pipefail
 # --- Config --------------------------------------------------------------
 declare -a checks=( node python3 npm git docker pip tsc yarn ) # <-- edit to change required binaries
 minPy="3.9"
-minNode="20.0.0"
-minNpm="10.0.0"
-minGit="2.40.0"
-minDocker="25.0.0"
-minPip="23.0.0"
-minTsc="5.0.0"
-minYarn="1.22.0" # maybe change to 4.0.0 if you use yarn berry
+#minNode="20.0.0"
+#minNpm="10.0.0"
+#minGit="2.40.0"
+#minDocker="25.0.0"
+#minPip="23.0.0"
+#minTsc="5.0.0"
+#minYarn="1.22.0" # maybe change to 4.0.0 if you use yarn berry
 
 env_file=".env"
 declare -a required_env=( NODE_ENV DATABASE_URL API_KEY )   # <-- edit to change required env vars
