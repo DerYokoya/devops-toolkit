@@ -1,0 +1,10 @@
+# Runtime dependencies for the Python scripts.
+
+# HTTP calls: API report generator (#13), service health checker (#15)
+requests>=2.31,<3
+
+# CSV cleaning and reporting: CSV cleaner (#14), log analyzer (#12), API report generator (#13)
+pandas>=2.0,<3
+
+# Excel export for the API report generator (#13)
+openpyxl>=3.1,<4
