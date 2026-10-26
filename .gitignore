@@ -1,0 +1,67 @@
+# ==========================================
+# SECRETS & SENSITIVE DATA
+# ==========================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+secrets.yaml
+.envrc
+
+# ==========================================
+# SCRIPT OUTPUT (backups, logs, dumps)
+# ==========================================
+*.log
+*.bak
+*.sql
+*.dump
+*.tar
+*.tar.gz
+*.tgz
+backups/
+logs/
+
+# ==========================================
+# PYTHON
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# ==========================================
+# IDE & OPERATING SYSTEMS
+# ==========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VS Code (use .vscode/* so the ! exceptions below actually work)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
