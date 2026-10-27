@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
+# Trap errors and print a timestamped message with the line number of
+# the failing command.
+trap 'echo "$(date +%F_%T) ERROR: line $LINENO: command failed" >&2' ERR
 
 # =========================================================================
 # Log rotator
@@ -51,6 +54,12 @@ Example (run from the repository root):
   ./bash/log-rotate.sh                 # dry run with defaults (7 and 14 days)
   ./bash/log-rotate.sh --apply         # compress 7-14 days old, delete older
   ./bash/log-rotate.sh --apply 3 30    # compress 3-30 days old, delete older
+
+Scheduling with cron (use the full path; cron does not load your shell config):
+  0 3 * * * /full/path/to/log-rotate.sh --apply >> ~/log-rotate.log 2>&1
+
+Errors are printed to stderr with a timestamp and the failing line number.
+The cron redirect above is what saves them to a file.
 EOF
 }
 
