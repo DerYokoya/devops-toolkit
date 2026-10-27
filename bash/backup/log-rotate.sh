@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+case "${1:-}" in
+    -h|--help) usage; exit 0 ;; 
+    "")        ;;
+    *)         echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
+esac
+
 DRY_RUN=0
 positional_args=()
 for arg in "$@"; do
@@ -19,6 +25,15 @@ run() {
     else
         "$@"
     fi
+}
+
+usage() {
+    cat <<EOF
+Usage: $0 [--dry-run] [AGE_YOUNG AGE_OLD]
+  --dry-run: Show what would be done without actually doing it
+  AGE_YOUNG: Compress log files newer than AGE_YOUNG days (default: 7)
+  AGE_OLD: Delete log files older than AGE_OLD days (default: 14)
+EOF
 }
 
 # Files AGE_YOUNG..AGE_OLD days old get compressed; older than AGE_OLD get deleted
