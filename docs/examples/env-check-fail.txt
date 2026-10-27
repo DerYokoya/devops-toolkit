@@ -1,1 +1,11 @@
-TODO
+node not found
+docker not found
+pip not found
+tsc not found
+yarn not found
+python3  3.14 (ok, need >= 3.9)
+npm      11.6.2 (ok, need >= 10.0.0)
+git      2.53.0 (ok, need >= 2.40.0)
+.env not found
+5 tool(s) missing
+3 env var(s) missing

@@ -1,1 +1,9 @@
-TODO
+node     24.22.1 (ok, need >= 20.0.0)
+python3  3.15 (ok, need >= 3.9)
+npm      11.6.2 (ok, need >= 10.0.0)
+git      2.51.0 (ok, need >= 2.40.0)
+docker   28.5.0 (ok, need >= 25.0.0)
+pip      26.2.2 (ok, need >= 23.0.0)
+tsc      7.0.2 (ok, need >= 5.0.0)
+yarn     1.22.22 (ok, need >= 1.22.0)
+All checks passed.
