@@ -1,26 +1,80 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# If $1 is empty, COMPRESSION defaults to 7
-COMPRESSION=${1:-7}
+DRY_RUN=0
+positional_args=()
+for arg in "$@"; do
+    if [[ $arg == "--dry-run" ]]; then
+        DRY_RUN=1
+    else
+        positional_args+=("$arg")
+    fi
+done
 
-# If $2 is empty, DELETION defaults to 14
-DELETION=${2:-14}
+run() {
+    if (( DRY_RUN )); then
+        printf 'DRY: '
+        printf '%q ' "$@"
+        printf '\n'
+    else
+        "$@"
+    fi
+}
+
+# Files AGE_YOUNG..AGE_OLD days old get compressed; older than AGE_OLD get deleted
+AGE_YOUNG=${positional_args[0]:-7}
+
+AGE_OLD=${positional_args[1]:-14}
+
+if (( AGE_YOUNG >= AGE_OLD )); then
+    echo "refusing: AGE_YOUNG must be less than AGE_OLD (got $AGE_YOUNG and $AGE_OLD)" >&2
+    exit 1
+fi
+
+out="backup-$(date +%F_%H%M%S).zip"
 
 # COMPRESSION step
 # -maxdepth 1 ignores subdirectories
-# xargs -0 to handle filenames with spaces or special characters
-find . \
+compression_files=()
+mapfile -d '' -t compression_files < <(find . \
     -maxdepth 1 \
     -type f \
-    -newermt "${DELETION} days ago 00:00" \
-    ! -newermt "${COMPRESSION} days ago 00:00" \
-    -print0 |
-    xargs -0 zip "backup-$(date -d "${COMPRESSION} days ago" +%F).zip"
+    -name "*.log" \
+    ! -name "backup-*.zip" \
+    -newermt "${AGE_OLD} days ago 00:00" \
+    ! -newermt "${AGE_YOUNG} days ago 00:00" \
+    -print0)
 
-echo "Compressed files from ${DELETION} days ago to ${COMPRESSION} days \
-ago to backup-$(date -d "${COMPRESSION} days ago" +%F).zip"
+if ((${#compression_files[@]})); then
+    run zip "$out" "${compression_files[@]}"
+    if (( DRY_RUN )); then
+        echo "Would compress files ${AGE_YOUNG}-${AGE_OLD} days old to $out"
+    else
+        echo "Compressed files ${AGE_YOUNG}-${AGE_OLD} days old to $out"
+    fi
+else
+    echo "nothing to compress" >&2
+fi
 
 # DELETION step
-find ./logs -type f -name "*.log" -mtime +${DELETION} -exec rm -f {} \;
-echo "Deleted log files older than ${DELETION} days"
+if (( AGE_OLD < 1 )); then
+    echo "refusing: AGE_OLD must be >= 1 (got $AGE_OLD)" >&2
+    exit 1
+fi
+
+deletion_files=()
+mapfile -d '' -t deletion_files < <(find ./logs \
+    -type f \
+    -name "*.log" \
+    ! -newermt "${AGE_OLD} days ago 00:00" \
+    -print0)
+
+for file in "${deletion_files[@]}"; do
+    run rm -f -- "$file"
+done
+
+if (( DRY_RUN )); then
+    echo "Would delete log files older than ${AGE_OLD} days"
+else
+    echo "Deleted log files older than ${AGE_OLD} days"
+fi
