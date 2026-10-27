@@ -26,7 +26,7 @@ devops-toolkit/
 ├── bash/
 │   ├── backup/
 │   │   ├── backup.sh
-│   │   ├── log-rotate.sh
+│   │   ├── log-rotate.sh ✅
 │   │   └── pg-backup-restore.sh
 │   ├── monitoring/
 │   │   ├── disk-memory-monitor.sh
