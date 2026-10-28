@@ -7,7 +7,6 @@ from pathlib import Path
 
 import pandas as pd
 
-
 DATE_FORMATS = {
     "YYYY-MM-DD": "%Y-%m-%d",
     "YYYY/MM/DD": "%Y/%m/%d",
@@ -56,9 +55,7 @@ def main():
   python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date --date-format "MM/DD/YYYY"
   python .\python\data\csv_cleaner.py -h""",
     )
-    parser.add_argument("input", 
-                        type=Path, 
-                        help="CSV file to clean")
+    parser.add_argument("input", type=Path, help="CSV file to clean")
     parser.add_argument(
         "-o",
         "--output",
