@@ -8,7 +8,15 @@ from pathlib import Path
 import pandas as pd
 
 
-def clean(df, date_column=None):
+DATE_FORMATS = {
+    "YYYY-MM-DD": "%Y-%m-%d",
+    "YYYY/MM/DD": "%Y/%m/%d",
+    "Month D, YYYY": "%B %d, %Y",
+    "MM/DD/YYYY": "%m/%d/%Y",
+}
+
+
+def clean(df, date_column=None, date_format="YYYY-MM-DD"):
     """Return (good_rows, duplicate_rows, bad_rows). Row labels are kept from the input."""
     # duplicated() returns one True/False per row: True for every repeat after the first
     duplicate_mask = df.duplicated()
@@ -19,7 +27,10 @@ def clean(df, date_column=None):
     if date_column:
         # Unparseable dates become NaT (the date version of NaN), so they get caught below
         parsed = pd.to_datetime(df[date_column], errors="coerce", format="mixed")
-        df[date_column] = parsed.dt.strftime("%Y-%m-%d")
+        formatted = parsed.dt.strftime(DATE_FORMATS[date_format])
+        if date_format == "Month D, YYYY":
+            formatted = formatted.str.replace(r" 0(?=\d,)", " ", regex=True)
+        df[date_column] = formatted
 
     # isna() is True where a cell is empty; any(axis=1) collapses each row to one True/False
     missing_mask = df.isna().any(axis=1)
@@ -42,6 +53,7 @@ def main():
   python .\python\data\csv_cleaner.py .\python\data\data.csv --output .\cleaned.csv
   python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date
   python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date -o .\cleaned.csv
+  python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date --date-format "MM/DD/YYYY"
   python .\python\data\csv_cleaner.py -h""",
     )
     parser.add_argument("input", 
@@ -55,7 +67,13 @@ def main():
     )
     parser.add_argument(
         "--date-column",
-        help="name of a column to convert to YYYY-MM-DD; unparseable dates count as missing",
+        help="name of a column to convert; unparseable dates count as missing",
+    )
+    parser.add_argument(
+        "--date-format",
+        choices=DATE_FORMATS,
+        default="YYYY-MM-DD",
+        help="output date format (default: YYYY-MM-DD)",
     )
     args = parser.parse_args()
 
@@ -79,7 +97,7 @@ def main():
         print(f"error: no column named {args.date_column!r}", file=sys.stderr)
         return 1
 
-    good, duplicates, bad = clean(df, args.date_column)
+    good, duplicates, bad = clean(df, args.date_column, args.date_format)
 
     good.to_csv(output, index=False)
     if not bad.empty:
