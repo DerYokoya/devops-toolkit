@@ -34,7 +34,15 @@ def csv_lines(frame):
 def main():
     parser = argparse.ArgumentParser(
         description="Remove duplicate rows, standardize dates, and set aside rows with "
-        "missing values. The input file is never modified."
+        "missing values. The input file is never modified.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=r"""examples:
+  python .\python\data\csv_cleaner.py .\python\data\data.csv
+  python .\python\data\csv_cleaner.py .\python\data\data.csv -o .\cleaned.csv
+  python .\python\data\csv_cleaner.py .\python\data\data.csv --output .\cleaned.csv
+  python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date
+  python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date -o .\cleaned.csv
+  python .\python\data\csv_cleaner.py -h""",
     )
     parser.add_argument("input", 
                         type=Path, 
