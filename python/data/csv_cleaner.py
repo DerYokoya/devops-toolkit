@@ -13,6 +13,7 @@ def clean(df, date_column=None):
     # duplicated() returns one True/False per row: True for every repeat after the first
     duplicate_mask = df.duplicated()
     duplicates = df[duplicate_mask]
+    # ~duplicate_mask is the opposite: True for every row that is not a duplicate
     df = df[~duplicate_mask].copy()
 
     if date_column:
@@ -35,7 +36,9 @@ def main():
         description="Remove duplicate rows, standardize dates, and set aside rows with "
         "missing values. The input file is never modified."
     )
-    parser.add_argument("input", type=Path, help="CSV file to clean")
+    parser.add_argument("input", 
+                        type=Path, 
+                        help="CSV file to clean")
     parser.add_argument(
         "-o",
         "--output",
