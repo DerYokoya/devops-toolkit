@@ -1,1 +1,7 @@
-TODO
+DRY RUN (default): no files will be changed. Use --apply to execute.
+DRY: tar -czf ./logs/logs-YYYY-MM-DD_HHMMSS.tar.gz -C ./logs ./compress-me.log
+DRY: rm -f -- ./logs/compress-me.log
+Would compress 1 file(s) (7-14 days old) to ./logs/logs-YYYY-MM-DD_HHMMSS.tar.gz
+DRY: rm -f -- ./logs/delete-me.log
+Would delete 1 log file(s) older than 14 days
+Dry run complete. Re-run with --apply to make these changes.

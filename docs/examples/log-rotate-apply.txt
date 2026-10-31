@@ -1,1 +1,2 @@
-TODO
+Compressed 1 file(s) (7-14 days old) to ./logs/logs-YYYY-MM-DD_HHMMSS.tar.gz
+Deleted 1 log file(s) older than 14 days

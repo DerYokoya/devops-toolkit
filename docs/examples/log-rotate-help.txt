@@ -1,1 +1,33 @@
-TODO
+Usage: log-rotate.sh [-h|--help] [--apply] [AGE_YOUNG AGE_OLD]
+
+Compresses log files between AGE_YOUNG and AGE_OLD days old into a
+timestamped .tar.gz archive, then deletes log files older than AGE_OLD days.
+Only *.log files directly inside ./logs are touched.
+
+By default this is a DRY RUN: it prints what it would do and changes nothing.
+Pass --apply to actually compress and delete files.
+
+Arguments:
+  AGE_YOUNG    Compress logs at least this many days old (default: 7)
+  AGE_OLD      Delete logs older than this many days (default: 14)
+               Give both values or neither. AGE_YOUNG must be less than AGE_OLD.
+
+Options:
+  --apply      Make real changes instead of a dry run.
+  -h, --help   Show this help message and exit.
+
+Exit status:
+  0    Finished (or nothing to do).
+  1    A check failed (bad ages, missing log directory, tar/gzip not installed).
+  2    Invalid command-line usage.
+
+Example (run from the repository root):
+  ./bash/log-rotate.sh                 # dry run with defaults (7 and 14 days)
+  ./bash/log-rotate.sh --apply         # compress 7-14 days old, delete older
+  ./bash/log-rotate.sh --apply 3 30    # compress 3-30 days old, delete older
+
+Scheduling with cron (use the full path; cron does not load your shell config):
+  0 3 * * * /full/path/to/log-rotate.sh --apply >> ~/log-rotate.log 2>&1
+
+Errors are printed to stderr with a timestamp and the failing line number.
+The cron redirect above is what saves them to a file.
