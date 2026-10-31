@@ -1,0 +1,27 @@
+﻿usage: csv_cleaner.py [-h] [-o OUTPUT] [--date-column DATE_COLUMN]
+                      [--date-format {YYYY-MM-DD,YYYY/MM/DD,Month D, YYYY,MM/DD/YYYY}]
+                      input
+
+Remove duplicate rows, standardize dates, and set aside rows with missing values. The input file is never modified.
+
+positional arguments:
+  input                 CSV file to clean
+
+options:
+  -h, --help            show this help message and exit
+  -o, --output OUTPUT   where to write the cleaned rows (default:
+                        <input>.cleaned.csv)
+  --date-column DATE_COLUMN
+                        name of a column to convert; unparseable dates count
+                        as missing
+  --date-format {YYYY-MM-DD,YYYY/MM/DD,Month D, YYYY,MM/DD/YYYY}
+                        output date format (default: YYYY-MM-DD)
+
+examples:
+  python .\python\data\csv_cleaner.py .\python\data\data.csv
+  python .\python\data\csv_cleaner.py .\python\data\data.csv -o .\cleaned.csv
+  python .\python\data\csv_cleaner.py .\python\data\data.csv --output .\cleaned.csv
+  python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date
+  python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date -o .\cleaned.csv
+  python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date --date-format "MM/DD/YYYY"
+  python .\python\data\csv_cleaner.py -h
