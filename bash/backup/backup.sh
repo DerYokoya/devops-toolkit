@@ -6,6 +6,7 @@ trap 'echo "$(date +%F_%T) ERROR: line $LINENO: command failed" >&2' ERR
 # =========================================================================
 # Backup
 #   - archives the TARGET folder into a timestamped .tar.gz inside BACKUP
+#   - verifies the archive (readable, file count matches) before deleting anything
 #   - keeps only the newest N archives and deletes the older ones
 #   - TARGET is only read, never modified or deleted
 #   - DRY RUN BY DEFAULT: nothing changes unless --apply is given
@@ -29,7 +30,8 @@ usage() {
 Usage: $(basename "$0") [-h|--help] [--apply] [TARGET BACKUP [N]]
 
 Archives the TARGET folder into a timestamped .tar.gz inside the BACKUP
-folder, then deletes the oldest archives so only the newest N remain.
+folder and verifies it, then deletes the oldest archives so only the newest N
+remain. If verification fails, the new archive is removed and nothing else is deleted.
 TARGET is never modified. Only files named backup-*.tar.gz inside BACKUP
 are ever deleted.
 
@@ -48,7 +50,8 @@ Options:
 
 Exit status:
   0    Finished.
-  1    A check failed (missing TARGET, BACKUP inside TARGET, tar/gzip not installed).
+  1    A check failed (missing TARGET, BACKUP inside TARGET, tar/gzip not installed,
+       or the archive failed verification).
   2    Invalid command-line usage.
 
 Example (run from the repository root):
@@ -73,6 +76,14 @@ run() {
     else
         "$@"
     fi
+}
+
+# Stop after a failed verification. The bad archive is removed so it can't
+# count toward the N newest backups and push out a good one.
+verify_fail() {
+    echo "verification failed: $1" >&2
+    rm -f -- "$out"
+    exit 1
 }
 
 # =========================================================================
@@ -152,12 +163,25 @@ out="$BACKUP/backup-$(date +%F_%H%M%S).tar.gz"
 # including subfolders, with paths kept relative.
 run tar -czf "$out" -C "$TARGET" .
 
-# Make sure the archive can be read back before trusting it
+# Verify the archive before trusting it (and before any old backup is deleted)
 if (( ! DRY_RUN )); then
-    tar -tzf "$out" > /dev/null
+    # 1. The archive must be readable from start to finish
+    tar -tzf "$out" > /dev/null || verify_fail "$out is not a readable archive"
+
+    # 2. It must hold as many entries as TARGET has (everything except folders).
+    #    tr strips the padding some versions of wc add (macOS).
+    source_count="$(find "$TARGET" ! -type d | wc -l | tr -d ' ')"
+    # Folder entries end in "/", so count only the lines that don't
+    archive_count="$(tar -tzf "$out" | awk '!/\/$/ { n++ } END { print n + 0 }')"
+    if (( source_count != archive_count )); then
+        verify_fail "$TARGET has $source_count file(s) but the archive has $archive_count"
+    fi
+
+    echo "Verified: $archive_count file(s) in the archive"
     echo "Backed up $TARGET to $out"
 else
     echo "Would back up $TARGET to $out"
+    echo "Would verify the archive (readable, file count matches $TARGET)"
 fi
 
 # =========================================================================
@@ -165,8 +189,8 @@ fi
 # =========================================================================
 # Archive names contain a sortable timestamp, so the glob lists them oldest
 # first. Only backup-*.tar.gz files are considered, nothing else in BACKUP.
-# shopt -s nullglob so that if there are no matches, the array is empty instead
-# of containing the literal string.
+# nullglob: a pattern with no matches expands to nothing instead of staying as
+# literal text (e.g. "backup-*.tar.gz"), so the array is empty when there are no archives.
 # shopt -u nullglob restores the default behavior afterward.
 shopt -s nullglob
 archives=("$BACKUP"/backup-*.tar.gz)
