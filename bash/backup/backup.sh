@@ -101,19 +101,24 @@ fi
 # Zip Files
 # =
 
-out="$LOG_DIR/logs-$(date +%F_%H%M%S).tar.gz"
+in="$TARGET"
+out="$BACKUP/backup-$(date +%F_%H%M%S).tar.gz"
 
 compression_files=()
+# IFS mean Internal Field Separator. It's to determine how to do word splitting.
+# -r prevents backslashes from being interpreted as escape characters.
+# -d uses the null character as the delimiter instead of a newline.
 while IFS= read -r -d '' f; do
     compression_files+=("$f")
-done < <(find "$LOG_DIR" \
-    -maxdepth 1 \
+# name "*" to find all files in the TARGET directory
+done < <(find "$TARGET" \
     -type f \
-    -name "*.log" \
-    -mmin "+${young_min}" \
-    ! -mmin "+${old_min}" \
+    -name "*" \
     -print0)
 
+# Will be skipped if the length of the compression_files array is 0
+# (no files to compress)
+# tool checks if tar and gzip are installed
 if (( ${#compression_files[@]} )); then
     for tool in tar gzip; do
         if ! command -v "$tool" > /dev/null 2>&1; then
@@ -128,18 +133,17 @@ if (( ${#compression_files[@]} )); then
         names+=("./${f##*/}")
     done
 
-    run tar -czf "$out" -C "$LOG_DIR" "${names[@]}"
+    run tar -czf "$out" -C "$BACKUP" "${names[@]}"
 
-    # Only remove the originals if the archive can be read back
     if (( ! DRY_RUN )); then
         tar -tzf "$out" > /dev/null
     fi
     run rm -f -- "${compression_files[@]}"
 
     if (( DRY_RUN )); then
-        echo "Would compress ${#compression_files[@]} file(s) (${AGE_YOUNG}-${AGE_OLD} days old) to $out"
+        echo "Would compress ${#compression_files[@]} file(s) into $out"
     else
-        echo "Compressed ${#compression_files[@]} file(s) (${AGE_YOUNG}-${AGE_OLD} days old) to $out"
+        echo "Compressed ${#compression_files[@]} file(s) into $out"
     fi
 else
     echo "nothing to compress" >&2
