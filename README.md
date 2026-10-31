@@ -26,7 +26,7 @@ devops-toolkit/
 ├── bash/
 │   ├── backup/
 │   │   ├── backup.sh
-│   │   ├── log-rotate.sh ✅
+│   │   ├── log-rotate.sh
 │   │   └── pg-backup-restore.sh
 │   ├── monitoring/
 │   │   ├── disk-memory-monitor.sh
@@ -34,7 +34,7 @@ devops-toolkit/
 │   │   └── cron-audit.sh
 │   ├── deployment/
 │   │   ├── deploy.sh
-│   │   └── env-check.sh ✅
+│   │   └── env-check.sh
 │   ├── git/
 │   │   ├── stale-branch-cleaner.sh
 │   │   └── pre-commit-check.sh
