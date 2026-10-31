@@ -5,9 +5,13 @@ trap 'echo "$(date +%F_%T) ERROR: line $LINENO: command failed" >&2' ERR
 
 # =========================================================================
 # Backup
+#   - archives the TARGET folder into a timestamped .tar.gz inside BACKUP
+#   - keeps only the newest N archives and deletes the older ones
+#   - TARGET is only read, never modified or deleted
 #   - DRY RUN BY DEFAULT: nothing changes unless --apply is given
 #
-# Portable on Linux, macOS, and Windows (Git Bash / WSL): uses TODO
+# Portable on Linux, macOS, and Windows (Git Bash / WSL): uses only tar,
+# gzip, and Bash 3.2-compatible syntax.
 # =========================================================================
 
 # --- Config --------------------------------------------------------------
@@ -22,36 +26,38 @@ DRY_RUN=1   # default: only show what would happen; --apply makes real changes
 
 usage() {
     cat <<EOF
-Usage: $(basename "$0") [-h|--help] [--apply] [TARGET] [BACKUP] [N]
+Usage: $(basename "$0") [-h|--help] [--apply] [TARGET BACKUP [N]]
 
-Compresses log files from the TARGET folder into a .tar.gz archive placed inside
-the BACKUP folder, then deletes backups older than the Nth backup.
-
-* files inside $TARGET are touched and files older than the Nth backup in $BACKUP
-are deleted.
+Archives the TARGET folder into a timestamped .tar.gz inside the BACKUP
+folder, then deletes the oldest archives so only the newest N remain.
+TARGET is never modified. Only files named backup-*.tar.gz inside BACKUP
+are ever deleted.
 
 By default this is a DRY RUN: it prints what it would do and changes nothing.
-Pass --apply to actually compress and delete files.
+Pass --apply to actually create the archive and delete old ones.
 
 Arguments:
-  TARGET    the project you want to back up.
-  BACKUP    where the archives get saved.
-  N         how many backups to keep. Optional.
+  TARGET    The folder to back up (default: $TARGET)
+  BACKUP    Where the archives are saved (default: $BACKUP)
+  N         How many backups to keep, at least 1 (default: $N)
+            Give TARGET and BACKUP together, or no arguments at all.
 
 Options:
   --apply      Make real changes instead of a dry run.
   -h, --help   Show this help message and exit.
 
 Exit status:
-  0    Finished (or nothing to do).
-  1    A check failed (bad ages, missing log directory, tar/gzip not installed).
+  0    Finished.
+  1    A check failed (missing TARGET, BACKUP inside TARGET, tar/gzip not installed).
   2    Invalid command-line usage.
 
 Example (run from the repository root):
-  TODO
+  ./bash/backup.sh                                  # dry run with defaults
+  ./bash/backup.sh --apply                          # back up and keep the newest $N
+  ./bash/backup.sh --apply ~/project ~/backups 10   # custom folders, keep 10
 
 Scheduling with cron (use the full path; cron does not load your shell config):
-  0 3 * * * /full/path/to/log-rotate.sh --apply >> ~/log-rotate.log 2>&1
+  0 3 * * * /full/path/to/backup.sh --apply ~/project ~/backups 7 >> ~/backup.log 2>&1
 
 Errors are printed to stderr with a timestamp and the failing line number.
 The cron redirect above is what saves them to a file.
@@ -76,92 +82,116 @@ positional_args=()
 for arg in "$@"; do
     case "$arg" in
         -h|--help) usage; exit 0 ;; # Help message
-        --apply)   DRY_RUN=0 ;; # Really runs the script
+        --apply)   DRY_RUN=0 ;;     # Really runs the script
         # Any string that starts with - but isn't -h, --help, or --apply
         -*)        echo "Unknown option: $arg" >&2; usage >&2; exit 2 ;;
         *)         positional_args+=("$arg") ;;
     esac
 done
 
-if (( ${#positional_args[@]} == 3 )); then
-    TARGET="${positional_args[0]}"
-    BACKUP="${positional_args[1]}"
-    N="${positional_args[2]}"
-elif (( ${positional_args[@]} == 2)); then
-    TARGET="${positional_args[0]}"
-    BACKUP="${positional_args[1]}"
-elif (( ${#positional_args[@]} != 0 )); then
-    echo "Give both TARGET and BACKUP, or  \
-    TARGET, BACKUP, and N, or no parameters." >&2
-    usage >&2
+# ${#positional_args[@]} is the NUMBER of arguments (the # matters!)
+case ${#positional_args[@]} in
+    0) ;;
+    2) TARGET="${positional_args[0]}"
+       BACKUP="${positional_args[1]}" ;;
+    3) TARGET="${positional_args[0]}"
+       BACKUP="${positional_args[1]}"
+       N="${positional_args[2]}" ;;
+    *) echo "Give TARGET and BACKUP (optionally followed by N), or no arguments." >&2
+       usage >&2
+       exit 2 ;;
+esac
+
+# =========================================================================
+# Validation
+# =========================================================================
+if [[ ! "$N" =~ ^[0-9]+$ ]] || (( 10#$N < 1 )); then
+    echo "refusing: N must be a positive integer (got $N)" >&2
     exit 2
 fi
+N=$((10#$N))   # base 10, so 08 is not read as octal
 
-# =========================================================================
-# Zip files
-# =========================================================================
+if [[ ! -d "$TARGET" ]]; then
+    echo "target directory not found: $TARGET" >&2
+    exit 1
+fi
 
-in="$TARGET"
-out="$BACKUP/backup-$(date +%F_%H%M%S).tar.gz"
-
-compression_files=()
-# IFS mean Internal Field Separator. It's to determine how to do word splitting.
-# -r prevents backslashes from being interpreted as escape characters.
-# -d uses the null character as the delimiter instead of a newline.
-while IFS= read -r -d '' f; do
-    compression_files+=("$f")
-# name "*" to find all files in the TARGET directory
-done < <(find "$TARGET" \
-    -type f \
-    -name "*" \
-    -print0)
-
-# Will be skipped if the length of the compression_files array is 0
-# (no files to compress)
-# tool checks if tar and gzip are installed
-if (( ${#compression_files[@]} )); then
-    for tool in tar gzip; do
-        if ! command -v "$tool" > /dev/null 2>&1; then
-            echo "$tool not found" >&2
-            exit 1
-        fi
-    done
-
-    # Bare file names (with ./ so a name starting with - is never an option)
-    names=()
-    for f in "${compression_files[@]}"; do
-        names+=("./${f##*/}")
-    done
-
-    run tar -czf "$out" -C "$BACKUP" "${names[@]}"
-
-    if (( ! DRY_RUN )); then
-        tar -tzf "$out" > /dev/null
+for tool in tar gzip; do
+    if ! command -v "$tool" > /dev/null 2>&1; then
+        echo "$tool not found" >&2
+        exit 1
     fi
-    run rm -f -- "${compression_files[@]}"
+done
 
-    if (( DRY_RUN )); then
-        echo "Would compress ${#compression_files[@]} file(s) into $out"
-    else
-        echo "Compressed ${#compression_files[@]} file(s) into $out"
-    fi
-else
-    echo "nothing to compress" >&2
+if (( DRY_RUN )); then
+    echo "DRY RUN (default): no files will be changed. Use --apply to execute."
 fi
 
 # =========================================================================
-# Delete files older than the Nth backup
+# 1. Create the archive
 # =========================================================================
-
-# tail -n +$((N+1)) means to skip the first N lines and print the rest.
-# lh instead of ls -ht because it works on Linux, macOS, and Windows (Git Bash / WSL).
-# meanwhile ls -ht would fail on Windows because it doesn't have the -h option.
-# -r prevents backslashes from being interpreted as escape characters.
-lh -ht "$BACKUP" | tail -n +$((N+1)) | while read -r f; do
-    if (( DRY_RUN )); then
-        echo "Would delete $f"
-    else
-        rm -f -- "$f"
-        echo "Deleted $f"
-    fi
+# An archive stored inside the folder it backs up would grow with every run.
+# BACKUP may not exist yet, so walk up to the nearest folder that does.
+probe="$BACKUP"
+while [[ ! -d "$probe" ]]; do
+    probe="$(dirname "$probe")"
 done
+target_abs="$(cd "$TARGET" && pwd -P)"
+probe_abs="$(cd "$probe" && pwd -P)"
+case "$probe_abs/" in
+    "$target_abs"/*)
+        echo "refusing: BACKUP ($BACKUP) is inside TARGET ($TARGET)" >&2
+        exit 1 ;;
+esac
+
+run mkdir -p "$BACKUP"
+
+out="$BACKUP/backup-$(date +%F_%H%M%S).tar.gz"
+
+# -C makes tar read from TARGET; "." archives everything inside it,
+# including subfolders, with paths kept relative.
+run tar -czf "$out" -C "$TARGET" .
+
+# Make sure the archive can be read back before trusting it
+if (( ! DRY_RUN )); then
+    tar -tzf "$out" > /dev/null
+    echo "Backed up $TARGET to $out"
+else
+    echo "Would back up $TARGET to $out"
+fi
+
+# =========================================================================
+# 2. Keep only the newest N archives
+# =========================================================================
+# Archive names contain a sortable timestamp, so the glob lists them oldest
+# first. Only backup-*.tar.gz files are considered, nothing else in BACKUP.
+# shopt -s nullglob so that if there are no matches, the array is empty instead
+# of containing the literal string.
+# shopt -u nullglob restores the default behavior afterward.
+shopt -s nullglob
+archives=("$BACKUP"/backup-*.tar.gz)
+shopt -u nullglob
+
+total=${#archives[@]}
+# In a dry run the new archive doesn't exist yet, so count it
+if (( DRY_RUN )); then
+    total=$((total + 1))
+fi
+
+excess=$((total - N))
+if (( excess > 0 )); then
+    for f in "${archives[@]:0:excess}"; do
+        run rm -f -- "$f"
+    done
+    if (( DRY_RUN )); then
+        echo "Would delete $excess old backup(s), keeping the newest $N"
+    else
+        echo "Deleted $excess old backup(s), keeping the newest $N"
+    fi
+else
+    echo "nothing to delete (keeping up to $N backups)"
+fi
+
+if (( DRY_RUN )); then
+    echo "Dry run complete. Re-run with --apply to make these changes."
+fi
