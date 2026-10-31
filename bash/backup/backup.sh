@@ -97,9 +97,9 @@ elif (( ${#positional_args[@]} != 0 )); then
     exit 2
 fi
 
-# =
-# Zip Files
-# =
+# =========================================================================
+# Zip files
+# =========================================================================
 
 in="$TARGET"
 out="$BACKUP/backup-$(date +%F_%H%M%S).tar.gz"
@@ -149,3 +149,19 @@ else
     echo "nothing to compress" >&2
 fi
 
+# =========================================================================
+# Delete files older than the Nth backup
+# =========================================================================
+
+# tail -n +$((N+1)) means to skip the first N lines and print the rest.
+# lh instead of ls -ht because it works on Linux, macOS, and Windows (Git Bash / WSL).
+# meanwhile ls -ht would fail on Windows because it doesn't have the -h option.
+# -r prevents backslashes from being interpreted as escape characters.
+lh -ht "$BACKUP" | tail -n +$((N+1)) | while read -r f; do
+    if (( DRY_RUN )); then
+        echo "Would delete $f"
+    else
+        rm -f -- "$f"
+        echo "Deleted $f"
+    fi
+done
