@@ -1,1 +1,40 @@
-TODO
+$ ./bash/backup.sh --help
+Usage: backup.sh [-h|--help] [--apply] [TARGET BACKUP [N]]
+
+Archives the TARGET folder into a timestamped .tar.gz inside the BACKUP
+folder and verifies it, then deletes the oldest archives so only the newest N
+remain. If verification fails, the new archive is removed and nothing else is deleted.
+TARGET is never modified. Only files named backup-*.tar.gz inside BACKUP
+are ever deleted.
+
+By default this is a DRY RUN: it prints what it would do and changes nothing.
+Pass --apply to actually create the archive and delete old ones.
+
+Arguments:
+  TARGET    The folder to back up (default: ./backup-target)
+  BACKUP    Where the archives are saved (default: ./backup)
+  N         How many backups to keep, at least 1 (default: 5)
+            Give TARGET and BACKUP together, or no arguments at all.
+
+Options:
+  --apply      Make real changes instead of a dry run.
+  -h, --help   Show this help message and exit.
+
+Exit status:
+  0    Finished.
+  1    A check failed (missing TARGET, BACKUP inside TARGET, tar/gzip not installed,
+       or the archive failed verification).
+  2    Invalid command-line usage.
+
+Example (run from the repository root):
+  ./bash/backup.sh                                  # dry run with defaults
+  ./bash/backup.sh --apply                          # back up and keep the newest 5
+  ./bash/backup.sh --apply ~/project ~/backups 10   # custom folders, keep 10
+
+Scheduling with cron (use the full path; cron does not load your shell config):
+  0 3 * * * /full/path/to/backup.sh --apply ~/project ~/backups 7 >> ~/backup.log 2>&1
+
+Errors are printed to stderr with a timestamp and the failing line number.
+The cron redirect above is what saves them to a file.
+$ echo $?
+0

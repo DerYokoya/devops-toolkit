@@ -1,1 +1,24 @@
-TODO
+# setup: a 10-file target and 5 existing backups
+$ mkdir -p backup-target/docs backup-target/src backup-target/config
+$ touch backup-target/{README.md,LICENSE,data.csv} backup-target/docs/{notes.txt,guide.md} backup-target/src/{main.py,utils.py,test_main.py} backup-target/config/{app.ini,server.ini}
+$ mkdir backup
+$ for d in 01 02 03 04 05; do tar -czf backup/backup-2026-10-${d}_030000.tar.gz -C backup-target .; done
+
+$ ls backup
+backup-2026-10-01_030000.tar.gz
+backup-2026-10-02_030000.tar.gz
+backup-2026-10-03_030000.tar.gz
+backup-2026-10-04_030000.tar.gz
+backup-2026-10-05_030000.tar.gz
+$ ./bash/backup.sh --apply
+Verified: 10 file(s) in the archive
+Backed up ./backup-target to ./backup/backup-2026-11-01_172145.tar.gz
+Deleted 1 old backup(s), keeping the newest 5
+$ echo $?
+0
+$ ls backup
+backup-2026-10-02_030000.tar.gz
+backup-2026-10-03_030000.tar.gz
+backup-2026-10-04_030000.tar.gz
+backup-2026-10-05_030000.tar.gz
+backup-2026-11-01_172145.tar.gz
