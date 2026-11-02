@@ -1,1 +1,4 @@
-TODO
+$ ./bash/monitoring/disk-memory-monitor.sh 101 75
+refusing: STORAGE_LIMIT must be a whole number from 1 to 100 (got 101)
+$ echo $?
+2

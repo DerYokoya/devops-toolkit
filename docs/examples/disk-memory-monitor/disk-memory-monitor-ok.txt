@@ -1,1 +1,6 @@
-TODO
+$ MONITOR_LOG=/tmp/monitor.log ./bash/monitoring/disk-memory-monitor.sh 100 100
+Disk (/): 1% used (limit 100%)
+RAM: 6% used (limit 100%)
+OK: usage is within both limits.
+$ echo $?
+0

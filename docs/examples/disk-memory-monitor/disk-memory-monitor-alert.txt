@@ -1,1 +1,6 @@
-TODO
+$ MONITOR_LOG=/tmp/monitor.log ./bash/monitoring/disk-memory-monitor.sh 1 1
+Disk (/): 1% used (limit 1%)
+RAM: 6% used (limit 1%)
+2026-11-02_16:40:52 ALERT: RAM is 6% in use (limit 1%)
+$ echo $?
+1
