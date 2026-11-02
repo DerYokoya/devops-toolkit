@@ -1,0 +1,9 @@
+$ ./bash/failed-login-detector.sh tests/fixtures/auth-sample.log
+Failed SSH logins by source IP (top 10) in tests/fixtures/auth-sample.log
+  COUNT  IP
+      5  203.0.113.5
+      3  198.51.100.23
+      2  192.0.2.77
+      1  2001:db8::1
+$ echo $?
+0
