@@ -1,0 +1,31 @@
+Usage: $(basename "$0") [-h|--help] [STORAGE_LIMIT RAM_LIMIT]
+
+Checks disk and RAM usage and alerts you when either passes its limit.
+Limits are percentages from 1 to 100; a trailing % is allowed (75 or 75%).
+
+Arguments:
+  STORAGE_LIMIT    Alert when the disk holding $STORAGE_PATH is more than this
+                   percent full (default: $STORAGE_LIMIT)
+  RAM_LIMIT        Alert when more than this percent of RAM is in use,
+                   not counting cache that can be freed (default: $RAM_LIMIT)
+                   Give STORAGE_LIMIT and RAM_LIMIT together, or no arguments at all.
+
+Options:
+  -h, --help   Show this help message and exit.
+
+Alerts are printed to stderr and appended, with a timestamp, to:
+  $LOG_FILE
+Set the MONITOR_LOG environment variable to use a different file.
+
+Exit status:
+  0    Both disk and RAM are within their limits.
+  1    A limit was exceeded, or a required tool (df, free) is missing.
+  2    Invalid command-line usage.
+
+Example (run from the repository root):
+  ./bash/disk-memory-monitor.sh               # use the default limits
+  ./bash/disk-memory-monitor.sh 90 80         # alert above 90% disk or 80% RAM
+
+Scheduling with cron every 5 minutes (use the full path; the script writes
+alerts to its own log file, so the output can be discarded):
+  */5 * * * * /full/path/to/disk-memory-monitor.sh 90 80 > /dev/null 2>&1

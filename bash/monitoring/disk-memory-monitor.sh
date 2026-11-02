@@ -50,12 +50,12 @@ Exit status:
   2    Invalid command-line usage.
 
 Example (run from the repository root):
-  ./bash/disk-mem-monitor.sh               # use the default limits
-  ./bash/disk-mem-monitor.sh 90 80         # alert above 90% disk or 80% RAM
+  ./bash/disk-memory-monitor.sh               # use the default limits
+  ./bash/disk-memory-monitor.sh 90 80         # alert above 90% disk or 80% RAM
 
 Scheduling with cron every 5 minutes (use the full path; the script writes
 alerts to its own log file, so the output can be discarded):
-  */5 * * * * /full/path/to/disk-mem-monitor.sh 90 80 > /dev/null 2>&1
+  */5 * * * * /full/path/to/disk-memory-monitor.sh 90 80 > /dev/null 2>&1
 EOF
 }
 
