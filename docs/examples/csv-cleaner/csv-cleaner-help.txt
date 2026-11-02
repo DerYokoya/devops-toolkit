@@ -1,4 +1,5 @@
-﻿usage: csv_cleaner.py [-h] [-o OUTPUT] [--date-column DATE_COLUMN]
+$ python .\python\data\csv_cleaner.py --help
+usage: csv_cleaner.py [-h] [-o OUTPUT] [--date-column DATE_COLUMN]
                       [--date-format {YYYY-MM-DD,YYYY/MM/DD,Month D, YYYY,MM/DD/YYYY}]
                       input
 
@@ -25,3 +26,6 @@ examples:
   python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date -o .\cleaned.csv
   python .\python\data\csv_cleaner.py .\python\data\data.csv --date-column date --date-format "MM/DD/YYYY"
   python .\python\data\csv_cleaner.py -h
+
+$ echo $?
+0

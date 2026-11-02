@@ -1,3 +1,4 @@
+$ ./bash/deployment/env-check.sh
 node not found
 docker not found
 pip not found
@@ -9,3 +10,5 @@ git      2.53.0 (ok, need >= 2.40.0)
 .env not found
 5 tool(s) missing
 3 env var(s) missing
+$ echo $?
+1

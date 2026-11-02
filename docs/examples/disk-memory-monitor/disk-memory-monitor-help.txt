@@ -1,3 +1,4 @@
+$ ./bash/monitoring/disk-memory-monitor.sh --help
 Usage: $(basename "$0") [-h|--help] [STORAGE_LIMIT RAM_LIMIT]
 
 Checks disk and RAM usage and alerts you when either passes its limit.
@@ -29,3 +30,5 @@ Example (run from the repository root):
 Scheduling with cron every 5 minutes (use the full path; the script writes
 alerts to its own log file, so the output can be discarded):
   */5 * * * * /full/path/to/disk-memory-monitor.sh 90 80 > /dev/null 2>&1
+$ echo $?
+0

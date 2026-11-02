@@ -1,3 +1,4 @@
+$ ./bash/backup/log-rotate.sh --help
 Usage: log-rotate.sh [-h|--help] [--apply] [AGE_YOUNG AGE_OLD]
 
 Compresses log files between AGE_YOUNG and AGE_OLD days old into a
@@ -31,3 +32,5 @@ Scheduling with cron (use the full path; cron does not load your shell config):
 
 Errors are printed to stderr with a timestamp and the failing line number.
 The cron redirect above is what saves them to a file.
+$ echo $?
+0
