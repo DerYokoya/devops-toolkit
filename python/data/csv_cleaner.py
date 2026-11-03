@@ -17,6 +17,13 @@ DATE_FORMATS = {
 
 def clean(df, date_column=None, date_format="YYYY-MM-DD"):
     """Return (good_rows, duplicate_rows, bad_rows). Row labels are kept from the input."""
+
+    if date_format not in DATE_FORMATS:
+        raise ValueError(
+            f"unsupported date_format {date_format!r}; "
+            f"choose one of: {', '.join(DATE_FORMATS)}"
+        )
+
     # duplicated() returns one True/False per row: True for every repeat after the first
     duplicate_mask = df.duplicated()
     duplicates = df[duplicate_mask]
