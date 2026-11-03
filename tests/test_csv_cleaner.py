@@ -21,7 +21,7 @@ def test_clean_separates_duplicates_and_missing():
     )
     good, duplicates, bad = clean(df)
     assert list(good["name"]) == ["Ann", "Bob"]
-    assert list(duplicates.index) == [2] 
+    assert list(duplicates.index) == [2]
     assert list(bad["name"]) == ["Cy"]
 
 
@@ -30,6 +30,7 @@ def test_bad_dates_are_rejected(signups):
     assert list(good["signup"]) == ["2024-01-05"]
     assert list(bad["name"]) == ["Bob"]
     assert bad["signup"].isna().all()
+
 
 @pytest.mark.parametrize(
     "raw, expected",
@@ -62,6 +63,7 @@ def test_output_date_formats(date_format, expected):
 def test_invalid_date_format_is_rejected(signups):
     with pytest.raises(ValueError, match="unsupported date_format"):
         clean(signups, date_column="signup", date_format="nonsense")
+
 
 def test_input_dataframe_unchanged(signups):
     before = signups.copy()
