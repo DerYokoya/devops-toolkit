@@ -18,6 +18,7 @@ devops-toolkit/
 ├── README.md
 ├── LICENSE
 ├── .gitignore
+├── .gitattributes
 ├── requirements.txt
 ├── .github/
 │   └── workflows/
