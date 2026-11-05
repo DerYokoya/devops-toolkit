@@ -139,6 +139,30 @@ Most scripts are designed to run from cron. For example, to run the disk monitor
 - Python 3.10+
 - Python packages listed in `requirements.txt`
 
+## Tested environment
+
+Developed and tested on:
+
+- Windows 11 with WSL 2, Ubuntu 26.04 LTS (check with `lsb_release -a`)
+- Bash 5.x (`bash --version`), Python 3.x (`python3 --version`)
+- CI: GitHub Actions on `ubuntu-latest` (ShellCheck, Ruff, pytest)
+
+Other systems may work but have not been tested.
+
+| Script | Linux / WSL | macOS | Notes |
+|---|---|---|---|
+| `env-check.sh` | tested | needs Bash 4+ | uses `declare -A` |
+| Python scripts | tested | untested | Python 3.12 in CI |
+
+### If something fails
+
+1. **Line endings:** this repo enforces `LF` via `.gitattributes`. If an old
+   checkout shows errors like `$'\r': command not found`, run `dos2unix` on the file.
+2. **File location:** on WSL, work inside your Linux home (`~/`), not `/mnt/c/...`,
+   where permissions and timestamps behave differently.
+3. **macOS:** the system Bash is 3.2 and `find`, `date` and `touch` are BSD versions;
+   install a newer Bash with `brew install bash` if a script needs it.
+
 ## Testing
 
 ```bash
