@@ -4,12 +4,17 @@
 import requests as rq
 import argparse
 import sys
+import asyncio
+import aiofiles
+import aiohttp
 
-#Dispatch parallel or async HTTP requests/socket connections
-
-#latencies
-
-#Render a consolidated uptime status breakdown
+async def get_website(website_arg, timeout):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(website_arg, timeout=timeout) as resp:
+            r = await resp.json()
+            if (r.status_code) > 299:
+                print("Error: ",r.status_code)
+    return r
 
 def main():
     timeout = 1
@@ -48,9 +53,7 @@ def main():
     timeout = args.timeout
     ip_list = args.ip_list
     for x in ip_list:
-        r = rq.get(x, timeout=timeout)
-    if (r.status_code) > 299:
-        print("Error: ",r.status_code)
+        get_website(x, timeout)
 
 if __name__ == "__main__":
     sys.exit(main())
