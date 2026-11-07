@@ -12,7 +12,7 @@ backup-2026-10-03_030000.tar.gz
 backup-2026-10-04_030000.tar.gz
 backup-2026-10-05_030000.tar.gz
 notes-keep-me.txt
-$ ./bash/backup.sh --apply ./backup-target ./backup 3
+$ ./bash/backup/backup.sh --apply ./backup-target ./backup 3
 Verified: 10 file(s) in the archive
 Backed up ./backup-target to ./backup/backup-2026-11-01_172145.tar.gz
 Deleted 3 old backup(s), keeping the newest 3

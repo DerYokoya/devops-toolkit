@@ -10,7 +10,7 @@ backup-2026-10-02_030000.tar.gz
 backup-2026-10-03_030000.tar.gz
 backup-2026-10-04_030000.tar.gz
 backup-2026-10-05_030000.tar.gz
-$ ./bash/backup.sh
+$ ./bash/backup/backup.sh
 DRY RUN (default): no files will be changed. Use --apply to execute.
 DRY: mkdir -p ./backup 
 DRY: tar -czf ./backup/backup-2026-11-01_172145.tar.gz -C ./backup-target . 

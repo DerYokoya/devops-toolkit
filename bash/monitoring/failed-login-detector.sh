@@ -42,9 +42,9 @@ Exit status:
   2    Invalid command-line usage.
 
 Example (run from the repository root):
-  ./bash/failed-login-detector.sh tests/fixtures/auth-sample.log
-  ./bash/failed-login-detector.sh tests/fixtures/auth-sample.log 3
-  sudo ./bash/failed-login-detector.sh      # scan the real system log
+  ./bash/monitoring/failed-login-detector.sh tests/fixtures/auth-sample.log
+  ./bash/monitoring/failed-login-detector.sh tests/fixtures/auth-sample.log 3
+  sudo ./bash/monitoring/failed-login-detector.sh      # scan the real system log
 EOF
 }
 

@@ -55,9 +55,9 @@ Exit status:
   2    Invalid command-line usage.
 
 Example (run from the repository root):
-  ./bash/backup.sh                                  # dry run with defaults
-  ./bash/backup.sh --apply                          # back up and keep the newest $N
-  ./bash/backup.sh --apply ~/project ~/backups 10   # custom folders, keep 10
+  ./bash/backup/backup.sh                                  # dry run with defaults
+  ./bash/backup/backup.sh --apply                          # back up and keep the newest $N
+  ./bash/backup/backup.sh --apply ~/project ~/backups 10   # custom folders, keep 10
 
 Scheduling with cron (use the full path; cron does not load your shell config):
   0 3 * * * /full/path/to/backup.sh --apply ~/project ~/backups 7 >> ~/backup.log 2>&1

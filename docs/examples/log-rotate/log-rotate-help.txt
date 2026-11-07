@@ -23,9 +23,9 @@ Exit status:
   2    Invalid command-line usage.
 
 Example (run from the repository root):
-  ./bash/log-rotate.sh                 # dry run with defaults (7 and 14 days)
-  ./bash/log-rotate.sh --apply         # compress 7-14 days old, delete older
-  ./bash/log-rotate.sh --apply 3 30    # compress 3-30 days old, delete older
+  ./bash/backup/log-rotate.sh                 # dry run with defaults (7 and 14 days)
+  ./bash/backup/log-rotate.sh --apply         # compress 7-14 days old, delete older
+  ./bash/backup/log-rotate.sh --apply 3 30    # compress 3-30 days old, delete older
 
 Scheduling with cron (use the full path; cron does not load your shell config):
   0 3 * * * /full/path/to/log-rotate.sh --apply >> ~/log-rotate.log 2>&1

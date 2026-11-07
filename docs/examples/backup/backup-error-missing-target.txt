@@ -1,4 +1,4 @@
-$ ./bash/backup.sh --apply ./does-not-exist ./backup
+$ ./bash/backup/backup.sh --apply ./does-not-exist ./backup
 target directory not found: ./does-not-exist
 $ echo $?
 1

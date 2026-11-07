@@ -46,11 +46,11 @@ Exit status:
   2    Invalid command-line usage.
 
 Example (run from anywhere inside the repository):
-  ./bash/pre-commit-check.sh          # staged files only
-  ./bash/pre-commit-check.sh --all    # whole codebase
+  ./bash/git/pre-commit-check.sh          # staged files only
+  ./bash/git/pre-commit-check.sh --all    # whole codebase
 
 Install as a Git hook, so it runs before every commit:
-  printf '#!/usr/bin/env bash\nexec "\$(git rev-parse --show-toplevel)/bash/pre-commit-check.sh"\n' \\
+  printf '#!/usr/bin/env bash\nexec "\$(git rev-parse --show-toplevel)/bash/git/pre-commit-check.sh"\n' \\
       > .git/hooks/pre-commit
   chmod +x .git/hooks/pre-commit
 Skip it once, in an emergency, with: git commit --no-verify

@@ -1,4 +1,4 @@
-$ ./bash/failed-login-detector.sh tests/fixtures/auth-sample.log
+$ ./bash/monitoring/failed-login-detector.sh tests/fixtures/auth-sample.log
 Failed SSH logins by source IP (top 10) in tests/fixtures/auth-sample.log
   COUNT  IP
       5  203.0.113.5
