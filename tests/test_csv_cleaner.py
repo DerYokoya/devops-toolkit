@@ -32,6 +32,18 @@ def test_bad_dates_are_rejected(signups):
     assert bad["signup"].isna().all()
 
 
+def test_dates_are_standardized_before_duplicate_detection():
+    df = pd.DataFrame(
+        {"name": ["Ann", "Ann"], "signup": ["2024-01-05", "2024/01/05"]}
+    )
+
+    good, duplicates, bad = clean(df, date_column="signup")
+
+    assert list(good["signup"]) == ["2024-01-05"]
+    assert list(duplicates.index) == [1]
+    assert bad.empty
+
+
 @pytest.mark.parametrize(
     "raw, expected",
     [
@@ -91,3 +103,17 @@ def test_missing_date_column_is_an_error(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr("sys.argv", ["csv_cleaner", str(csv), "--date-column", "nope"])
     assert main() == 1
     assert "no column named" in capsys.readouterr().err
+
+
+def test_stale_rejected_file_is_removed_when_no_rows_are_rejected(
+    tmp_path, monkeypatch, capsys
+):
+    csv = tmp_path / "data.csv"
+    rejected = tmp_path / "data.rejected.csv"
+    csv.write_text("name\nAnn\n")
+    rejected.write_text("name\nOld rejected row\n")
+    monkeypatch.setattr("sys.argv", ["csv_cleaner", str(csv)])
+
+    assert main() == 0
+    assert not rejected.exists()
+    capsys.readouterr()

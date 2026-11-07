@@ -24,12 +24,7 @@ def clean(df, date_column=None, date_format="YYYY-MM-DD"):
             f"choose one of: {', '.join(DATE_FORMATS)}"
         )
 
-    # duplicated() returns one True/False per row: True for every repeat after the first
-    duplicate_mask = df.duplicated()
-    duplicates = df[duplicate_mask]
-    # ~duplicate_mask is the opposite: True for every row that is not a duplicate
-    df = df[~duplicate_mask].copy()
-
+    df = df.copy()
     if date_column:
         # Unparseable dates become NaT (the date version of NaN), so they get caught below
         parsed = pd.to_datetime(df[date_column], errors="coerce", format="mixed")
@@ -37,6 +32,12 @@ def clean(df, date_column=None, date_format="YYYY-MM-DD"):
         if date_format == "Month D, YYYY":
             formatted = formatted.str.replace(r" 0(?=\d,)", " ", regex=True)
         df[date_column] = formatted
+
+    # duplicated() returns one True/False per row: True for every repeat after the first
+    duplicate_mask = df.duplicated()
+    duplicates = df[duplicate_mask]
+    # ~duplicate_mask is the opposite: True for every row that is not a duplicate
+    df = df[~duplicate_mask]
 
     # isna() is True where a cell is empty; any(axis=1) collapses each row to one True/False
     missing_mask = df.isna().any(axis=1)
@@ -106,6 +107,8 @@ def main():
     good.to_csv(output, index=False)
     if not bad.empty:
         bad.to_csv(rejected, index=False)
+    elif rejected.resolve() != output.resolve() and rejected.exists():
+        rejected.unlink()
 
     print("=== SUMMARY ===")
     print(f"Rows read: {len(df)}")
