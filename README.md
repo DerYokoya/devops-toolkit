@@ -135,7 +135,7 @@ Most scripts are designed to run from cron. For example, to run the disk monitor
 
 ## Requirements
 
-- Linux or macOS (tested on Ubuntu 24.04)
+- Windows 11 with WSL 2, Ubuntu 26.04 LTS
 - Bash 4+
 - Python 3.10+
 - Python packages listed in `requirements.txt`
@@ -150,10 +150,14 @@ Developed and tested on:
 
 Other systems may work but have not been tested.
 
-| Script | Linux / WSL | macOS | Notes |
+| Script | Linux | macOS | Notes |
 |---|---|---|---|
 | `env-check.sh` | tested | needs Bash 4+ | uses `declare -A` |
-| Python scripts | tested | untested | Python 3.12 in CI |
+| `log-rotate.sh`, `backup.sh` | tested | untested | written for Bash 3.2 and BSD `find` |
+| `pre-commit-check.sh` | tested | untested | |
+| `failed-login-detector.sh` | tested | untested | |
+| `disk-memory-monitor.sh` | tested | not supported | needs `free` (Linux only) |
+| `csv_cleaner.py` | tested | untested | Python 3.12 in CI |
 
 ### If something fails
 
