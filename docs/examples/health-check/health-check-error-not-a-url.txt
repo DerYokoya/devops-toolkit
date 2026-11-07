@@ -1,1 +1,5 @@
-TODO
+$ python3 python/monitoring/health_check.py example.com
+usage: health_check.py [-h] [-f FILE] [-t TIMEOUT] [urls ...]
+health_check.py: error: not an http(s) URL: example.com
+$ echo $?
+2

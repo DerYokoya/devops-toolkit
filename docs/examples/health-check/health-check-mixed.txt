@@ -1,1 +1,8 @@
-TODO
+$ python3 python/monitoring/health_check.py https://example.com http://127.0.0.1:9
+URL                   STATUS     TIME  RESULT
+https://example.com   200       0.50s  UP
+http://127.0.0.1:9    -         0.00s  DOWN (ConnectionError)
+
+1 of 2 unresponsive
+$ echo $?
+1

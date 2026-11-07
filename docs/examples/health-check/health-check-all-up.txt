@@ -1,1 +1,8 @@
-TODO
+$ python3 python/monitoring/health_check.py https://example.com https://github.com
+URL                  STATUS     TIME  RESULT
+https://example.com  200       0.50s  UP
+https://github.com   200       0.58s  UP
+
+All 2 responsive
+$ echo $?
+0
