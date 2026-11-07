@@ -110,6 +110,19 @@ pip install -r requirements.txt
 chmod +x bash/**/*.sh
 ```
 
+### Install the pre-commit hook
+
+Install the repository's pre-commit checks so they run automatically before
+each commit:
+
+```bash
+printf '#!/usr/bin/env bash\nexec "$(git rev-parse --show-toplevel)/bash/git/pre-commit-check.sh"\n' > .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
+The hook checks staged shell and Python files and blocks the commit if a check
+fails. To skip it once in an emergency, use `git commit --no-verify`.
+
 ## Usage examples
 
 ```bash
