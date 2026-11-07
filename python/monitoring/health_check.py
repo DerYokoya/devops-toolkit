@@ -14,6 +14,7 @@ MAX_WORKERS = 10
 
 # Dataclass is used to force type checking of the Result attributes,
 # and to make it easy to add new attributes in the future.
+# Error is optional.
 @dataclass
 class Result:
     url: str
@@ -25,12 +26,13 @@ class Result:
 
 def check_url(url, timeout):
     """Check one URL. Never raises: every failure becomes a Result with up=False."""
+    # monotic time avoids problems with system clock changes during the request.
     start = time.monotonic()
     try:
         # timeout applies to connecting and to waiting for data, each separately
         response = requests.get(url, timeout=timeout)
     except requests.RequestException as exc:
-        # ConnectionError, Timeout, TooManyRedirects, ... all land here
+        # ConnectionError, Timeout, TooManyRedirects, are all caught here
         return Result(url, False, None, time.monotonic() - start, type(exc).__name__)
 
     seconds = time.monotonic() - start
@@ -43,19 +45,30 @@ def check_url(url, timeout):
 
 def check_all(urls, timeout):
     """Check every URL in parallel. Results come back in the same order as urls."""
+    # Picks what's smaller between the number of URLs and MAX_WORKERS
     workers = min(len(urls), MAX_WORKERS)
+    # ThreadPoolExecutor.map returns results in the same order as the input iterable.
     with ThreadPoolExecutor(max_workers=workers) as pool:
+        # This maps a lambda function that calls check_url with the timeout
+        # argument to each URL in urls.
         return list(pool.map(lambda url: check_url(url, timeout), urls))
 
 
 def read_urls(path):
     """One URL per line; blank lines and lines starting with # are ignored."""
+    # Gets the text of the file, splits it into lines, and strips whitespace
+    # from each line.
     lines = (line.strip() for line in path.read_text().splitlines())
+    # Filters out blank lines and lines starting with #,
+    # returning a list of valid URLs.
     return [line for line in lines if line and not line.startswith("#")]
 
 
 def print_report(results):
+    # Max width of the URL column as the length of the longest URL in results.
     width = max(len(r.url) for r in results)
+    # Header row contains column names, with URL left-aligned, STATUS left-aligned,
+    # TIME right-aligned, and RESULT left-aligned.
     print(f"{'URL':<{width}}  {'STATUS':<6}  {'TIME':>7}  RESULT")
     for r in results:
         status = str(r.status) if r.status else "-"
