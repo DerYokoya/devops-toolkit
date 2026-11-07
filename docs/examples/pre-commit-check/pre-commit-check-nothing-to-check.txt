@@ -1,1 +1,6 @@
-TODO
+$ ./bash/git/pre-commit-check.sh
+Checking staged files
+nothing to check
+Ready to commit! Pre-commit check passed.
+$ echo $?
+0

@@ -1,1 +1,5 @@
-TODO
+$ ./bash/git/pre-commit-check.sh
+Checking staged files
+shellcheck not found (install with: sudo apt install shellcheck)
+$ echo $?
+1

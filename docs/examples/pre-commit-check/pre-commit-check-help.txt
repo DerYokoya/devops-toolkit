@@ -1,1 +1,32 @@
-TODO
+$ ./bash/git/pre-commit-check.sh --help
+Usage: pre-commit-check.sh [-h|--help] [--all]
+
+Runs the linters and tests on the files you are about to commit and blocks
+the commit if any check fails.
+
+Checks:
+  *.sh    bash -n (syntax), shellcheck
+  *.py    ruff check, ruff format --check, pytest
+          (the Python checks run only if at least one .py file is selected)
+
+Options:
+  --all        Check every tracked and untracked (non-ignored) file instead of
+               only the staged ones.
+  -h, --help   Show this help message and exit.
+
+Exit status:
+  0    All checks passed (or there was nothing to check).
+  1    A check failed, a required tool is missing, or this is not a git repository.
+  2    Invalid command-line usage.
+
+Example (run from anywhere inside the repository):
+  ./bash/pre-commit-check.sh          # staged files only
+  ./bash/pre-commit-check.sh --all    # whole codebase
+
+Install as a Git hook, so it runs before every commit:
+  printf '#!/usr/bin/env bash\nexec "$(git rev-parse --show-toplevel)/bash/pre-commit-check.sh"\n' \
+      > .git/hooks/pre-commit
+  chmod +x .git/hooks/pre-commit
+Skip it once, in an emergency, with: git commit --no-verify
+$ echo $?
+0

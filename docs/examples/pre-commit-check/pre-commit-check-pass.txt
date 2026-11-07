@@ -1,1 +1,10 @@
-TODO
+$ ./bash/git/pre-commit-check.sh
+Checking staged files
+ok    bash -n bash/monitoring/disk-memory-monitor.sh
+ok    shellcheck bash/monitoring/disk-memory-monitor.sh
+ok    ruff check
+ok    ruff format --check
+ok    pytest
+Ready to commit! Pre-commit check passed.
+$ echo $?
+0
