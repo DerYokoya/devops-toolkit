@@ -33,9 +33,7 @@ def test_bad_dates_are_rejected(signups):
 
 
 def test_dates_are_standardized_before_duplicate_detection():
-    df = pd.DataFrame(
-        {"name": ["Ann", "Ann"], "signup": ["2024-01-05", "2024/01/05"]}
-    )
+    df = pd.DataFrame({"name": ["Ann", "Ann"], "signup": ["2024-01-05", "2024/01/05"]})
 
     good, duplicates, bad = clean(df, date_column="signup")
 
