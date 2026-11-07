@@ -12,6 +12,7 @@ import requests
 
 MAX_WORKERS = 10
 
+
 # Dataclass is used to force type checking of the Result attributes,
 # and to make it easy to add new attributes in the future.
 # Error is optional.
