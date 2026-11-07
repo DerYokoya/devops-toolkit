@@ -1,60 +1,119 @@
 #!/usr/bin/env python3
-"""Pings a list of URLs or ports and reports which infrastructure pieces are unresponsive."""
+"""Check a list of URLs and report which ones are unresponsive."""
 
-import requests as rq
 import argparse
 import sys
-import asyncio
-import aiofiles
-import aiohttp
+import time
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
+from pathlib import Path
 
-async def get_website(website_arg, timeout):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(website_arg, timeout=timeout) as resp:
-            r = await resp.json()
-            if (r.status_code) > 299:
-                print("Error: ",r.status_code)
-    return r
+import requests
+
+MAX_WORKERS = 10
+
+# Dataclass is used to force type checking of the Result attributes,
+# and to make it easy to add new attributes in the future.
+@dataclass
+class Result:
+    url: str
+    up: bool
+    status: int | None
+    seconds: float
+    error: str | None = None
+
+
+def check_url(url, timeout):
+    """Check one URL. Never raises: every failure becomes a Result with up=False."""
+    start = time.monotonic()
+    try:
+        # timeout applies to connecting and to waiting for data, each separately
+        response = requests.get(url, timeout=timeout)
+    except requests.RequestException as exc:
+        # ConnectionError, Timeout, TooManyRedirects, ... all land here
+        return Result(url, False, None, time.monotonic() - start, type(exc).__name__)
+
+    seconds = time.monotonic() - start
+    if response.status_code >= 400:
+        return Result(
+            url, False, response.status_code, seconds, f"HTTP {response.status_code}"
+        )
+    return Result(url, True, response.status_code, seconds)
+
+
+def check_all(urls, timeout):
+    """Check every URL in parallel. Results come back in the same order as urls."""
+    workers = min(len(urls), MAX_WORKERS)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        return list(pool.map(lambda url: check_url(url, timeout), urls))
+
+
+def read_urls(path):
+    """One URL per line; blank lines and lines starting with # are ignored."""
+    lines = (line.strip() for line in path.read_text().splitlines())
+    return [line for line in lines if line and not line.startswith("#")]
+
+
+def print_report(results):
+    width = max(len(r.url) for r in results)
+    print(f"{'URL':<{width}}  {'STATUS':<6}  {'TIME':>7}  RESULT")
+    for r in results:
+        status = str(r.status) if r.status else "-"
+        outcome = "UP" if r.up else f"DOWN ({r.error})"
+        print(f"{r.url:<{width}}  {status:<6}  {r.seconds:>6.2f}s  {outcome}")
+
+    down = sum(not r.up for r in results)
+    print()
+    print(
+        f"{down} of {len(results)} unresponsive"
+        if down
+        else f"All {len(results)} responsive"
+    )
+
 
 def main():
-    timeout = 1
-    ip_list = ['https://api.github.com/events', 'https://google.ca']
-
     parser = argparse.ArgumentParser(
-        description="Pings a list of URLs or ports and reports which infrastructure pieces are unresponsive.",
+        description="Check http(s) URLs in parallel and report which ones are unresponsive. "
+        "Exits with status 1 if any URL is down.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=r"""examples:
-  python .\python\monitoring\health_check.py --timeout 1 --ip_list ['https://api.github.com/events', 'https://google.ca']
-  python .\python\monitoring\health_check.py -h""",
+        epilog="""examples:
+  python3 python/monitoring/health_check.py https://example.com https://github.com
+  python3 python/monitoring/health_check.py --file urls.txt --timeout 2
+  python3 python/monitoring/health_check.py -h""",
+    )
+    parser.add_argument("urls", nargs="*", help="http(s) URLs to check")
+    parser.add_argument(
+        "-f", "--file", type=Path, help="text file with one URL per line"
     )
     parser.add_argument(
-        "-tm",
+        "-t",
         "--timeout",
         type=float,
-        help="Timeout in seconds",
+        default=5.0,
+        help="seconds to wait per URL (default: 5)",
     )
-    parser.add_argument(
-        "-ip"
-        "--ip_list",
-        type=bytearray,
-        help="List of URLs/IPs/Ports",
-    )
-
     args = parser.parse_args()
 
-    if not isinstance(args.timeout, (int, float)):
-        print(f"error: timeout must be a number: {args.timeout}", file=sys.stderr)
-        return 1
+    if args.timeout <= 0:
+        parser.error("--timeout must be greater than 0")
 
-    if not isinstance(args.ip_list, (str, bytearray)):
-        print(f"error: ip_list must be an array or a string: {args.ip_list}", file=sys.stderr)
-        return 1
+    urls = list(args.urls)
+    if args.file:
+        if not args.file.is_file():
+            print(f"error: file not found: {args.file}", file=sys.stderr)
+            return 1
+        urls += read_urls(args.file)
+    if not urls:
+        parser.error("give at least one URL, or use --file")
 
-    timeout = args.timeout
-    ip_list = args.ip_list
-    for x in ip_list:
-        get_website(x, timeout)
+    not_urls = [u for u in urls if not u.startswith(("http://", "https://"))]
+    if not_urls:
+        parser.error(f"not an http(s) URL: {', '.join(not_urls)}")
+
+    results = check_all(urls, args.timeout)
+    print_report(results)
+    return 1 if any(not r.up for r in results) else 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
-
