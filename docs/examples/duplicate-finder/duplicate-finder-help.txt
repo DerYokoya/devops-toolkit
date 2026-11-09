@@ -1,1 +1,17 @@
-TODO
+$ python3 python/files/duplicate_finder.py --help
+usage: duplicate_finder.py [-h] directory
+
+Find files with identical contents inside a folder tree. Files are only hashed when another file has the same size. Empty files and symlinks are ignored. Nothing is ever deleted.
+
+positional arguments:
+  directory   folder to scan (searched recursively)
+
+options:
+  -h, --help  show this help message and exit
+
+examples:
+  python3 python/files/duplicate_finder.py tests/fixtures/duplicates
+  python3 python/files/duplicate_finder.py ~/Downloads
+  python3 python/files/duplicate_finder.py -h
+$ echo $?
+0

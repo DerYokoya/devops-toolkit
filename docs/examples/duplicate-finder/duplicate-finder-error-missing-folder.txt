@@ -1,1 +1,4 @@
-TODO
+$ python3 python/files/duplicate_finder.py does-not-exist
+error: not a folder: does-not-exist
+$ echo $?
+1

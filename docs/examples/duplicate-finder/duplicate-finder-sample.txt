@@ -1,1 +1,14 @@
-TODO
+# setup: two files with identical contents and one unique file
+$ mkdir -p duplicate-fixtures/photos duplicate-fixtures/archive
+$ printf 'same report' > duplicate-fixtures/photos/report.txt
+$ printf 'same report' > duplicate-fixtures/archive/report-copy.txt
+$ printf 'unique notes' > duplicate-fixtures/notes.txt
+
+$ python3 python/files/duplicate_finder.py duplicate-fixtures
+Group 1: 2 identical files, 11 bytes each
+  duplicate-fixtures/archive/report-copy.txt
+  duplicate-fixtures/photos/report.txt
+
+1 redundant file(s) in 1 group(s); 11 bytes could be reclaimed
+$ echo $?
+0

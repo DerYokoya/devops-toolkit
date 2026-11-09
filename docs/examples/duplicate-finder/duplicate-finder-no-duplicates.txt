@@ -1,1 +1,9 @@
-TODO
+# setup: a folder containing only unique files
+$ mkdir -p unique-files
+$ printf 'one file' > unique-files/one.txt
+$ printf 'another file' > unique-files/two.txt
+
+$ python3 python/files/duplicate_finder.py unique-files
+No duplicate files found
+$ echo $?
+0
