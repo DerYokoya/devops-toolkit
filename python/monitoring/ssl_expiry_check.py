@@ -30,6 +30,8 @@ def days_remaining(not_after, now):
     of strptime because it ignores the system locale and always works in UTC.
     """
     expiry = ssl.cert_time_to_seconds(not_after)
+    # Gets the number of whole days remaining, rounding down. 86400 seconds per day.
+    # Can be negative if the certificate has already expired.
     return int((expiry - now) // 86400)
 
 
@@ -43,7 +45,17 @@ def classify(days_left, warn_days):
 
 def fetch_not_after(host, port, timeout):
     """Connect over TLS and return the certificate's notAfter string. This is the only network code."""
+    # Creates a context with sensible security defaults
+    # Including certificate verification
     context = ssl.create_default_context()
+
+    # Creates socket and wraps it in TLS, then reads the certificate's notAfter field.
+    # The with statement ensures the socket is closed when done.
+    
+    # getpeercert() returns a dict with the certificate's fields, including 'notAfter'.
+    
+    # TLS is a form of encryption that protects the connection from eavesdropping
+    # and tampering.
     with (
         socket.create_connection((host, port), timeout=timeout) as sock,
         context.wrap_socket(sock, server_hostname=host) as tls,
@@ -53,13 +65,18 @@ def fetch_not_after(host, port, timeout):
 
 def check_url(url, timeout, warn_days, now=None):
     """Check one https URL. Never raises: every failure becomes a Result."""
+    # time.time() returns a float representing seconds,
+    # while datetime.now() returns a human-readable object
+    # example of time.time() output: 1794359888.6400099
+    # example of datetime.now() output: 2026-11-11 01:18:08.640053
+
     now = time.time() if now is None else now
     parsed = urlparse(url)
-    try:
+    try: # if the port is not specified, default to 443 for HTTPS
         not_after = fetch_not_after(parsed.hostname, parsed.port or 443, timeout)
     except ssl.SSLCertVerificationError as exc:
         # With the default settings an expired certificate fails the handshake itself,
-        # so we never get far enough to read its date. Recognize it here.
+        # so its date can't be read.
         if exc.verify_code == X509_CERT_HAS_EXPIRED:
             return Result(url, "EXPIRED", detail="certificate has expired")
         return Result(url, "ERROR", detail=exc.verify_message)
