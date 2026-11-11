@@ -51,9 +51,9 @@ def fetch_not_after(host, port, timeout):
 
     # Creates socket and wraps it in TLS, then reads the certificate's notAfter field.
     # The with statement ensures the socket is closed when done.
-    
+
     # getpeercert() returns a dict with the certificate's fields, including 'notAfter'.
-    
+
     # TLS is a form of encryption that protects the connection from eavesdropping
     # and tampering.
     with (
@@ -72,7 +72,7 @@ def check_url(url, timeout, warn_days, now=None):
 
     now = time.time() if now is None else now
     parsed = urlparse(url)
-    try: # if the port is not specified, default to 443 for HTTPS
+    try:  # if the port is not specified, default to 443 for HTTPS
         not_after = fetch_not_after(parsed.hostname, parsed.port or 443, timeout)
     except ssl.SSLCertVerificationError as exc:
         # With the default settings an expired certificate fails the handshake itself,
