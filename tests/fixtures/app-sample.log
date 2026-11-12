@@ -1,0 +1,15 @@
+{"time":"2026-11-10T09:00:01Z","level":"INFO","endpoint":"/api/users","status":200,"duration_ms":120,"message":"ok"}
+{"time":"2026-11-10T09:00:05Z","level":"INFO","endpoint":"/api/users","status":200,"duration_ms":80,"message":"ok"}
+{"time":"2026-11-10T09:01:10Z","level":"INFO","endpoint":"/api/orders","status":200,"duration_ms":300,"message":"ok"}
+{"time":"2026-11-10T09:02:00Z","level":"ERROR","endpoint":"/api/orders","status":500,"duration_ms":900,"message":"database timeout"}
+{"time":"2026-11-10T09:02:30Z","level":"INFO","endpoint":"/api/login","status":200,"duration_ms":45,"message":"ok"}
+{"time":"2026-11-10T09:03:15Z","level":"ERROR","endpoint":"/api/orders","status":500,"duration_ms":1100,"message":"database timeout"}
+{"time":"2026-11-10T09:04:00Z","level":"WARNING","endpoint":"/api/users","status":200,"duration_ms":400,"message":"slow response"}
+this line is not json
+{"time":"2026-11-10T09:05:00Z","level":"ERROR","endpoint":"/api/login","status":401,"duration_ms":30,"message":"invalid credentials"}
+{"time":"2026-11-10T09:06:00Z","level":"ERROR","endpoint":"/api/users","status":500,"duration_ms":50,"message":"null pointer"}
+{"time":"2026-11-10T09:07:00Z","level":"ERROR","message":"disk almost full"}
+{"time":"2026-11-10T09:08:00Z","level":"INFO","endpoint":"/api/orders","status":200,"duration_ms":500,"message":"ok"}
+{"level":"INFO"
+{"time":"2026-11-11T08:00:00Z","level":"INFO","endpoint":"/api/login","status":200,"duration_ms":55,"message":"ok"}
+{"hello": "world"}
