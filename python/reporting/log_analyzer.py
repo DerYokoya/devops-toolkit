@@ -1,12 +1,3 @@
-
-#Parse log formats (JSON or Regex pattern matching)
-
-#Calculate overall error rate and slice by error types
-
-#Track response times to surface slowest API paths
-
-#Output structural telemetry summary
-
 #!/usr/bin/env python3
 """Parses application logs and produces a daily summary of error counts, slowest endpoints, and top errors."""
 
@@ -18,14 +9,18 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 MAX_WORKERS = 10
-KEYWORDS = 'Error, , Banana'
+KEYWORDS = 'Error, Failed, Exception, Warning, Unauthorized, link down'
 
 
 def check_all(*log_files):
+    counter = 0
+    total = 0
+    a = ""
+
     for l in log_files:
         executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
-        a = executor.submit(file_breakdown(l))
-    return a
+        a, counter, total += executor.submit(file_breakdown(l))
+    return a, counter
 
 def file_breakdown(file):
     msg = ""
@@ -34,8 +29,8 @@ def file_breakdown(file):
         for line in log_file:
             check = any(line for item in KEYWORDS)
             if (check == True):
-                msg += ("Problem in log: ",line)
-        return msg
+                msg += ("Problem in log: ",line,"\n")
+        return msg, int(check), 1
 
 def main():
     parser = argparse.ArgumentParser(
@@ -62,7 +57,14 @@ def main():
     if not files:
         parser.error("give at least one file")
 
-    results = check_all(files)
+    results, count, tot = check_all(files)
+
+    if (tot == 0):
+        print(f"error: zero log files in total were found", file=sys.stderr)
+        return 1
+
+    print(results)
+    print(f"Ratio of {(count/tot)*100} %")
     return 1 if any(r.status != "OK" for r in results) else 0
 
 
