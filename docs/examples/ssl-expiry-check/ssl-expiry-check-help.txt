@@ -1,1 +1,23 @@
-TODO
+$ python3 python/monitoring/ssl_expiry_check.py --help
+usage: ssl_expiry_check.py [-h] [-f FILE] [-w WARN_DAYS] [-t TIMEOUT]
+                           [urls ...]
+
+Check the SSL certificate of each https URL and report how many days remain. Exits with status 1 if any certificate is expired, expires within --warn-days, or could not be checked.
+
+positional arguments:
+  urls                  https URLs to check
+
+options:
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  text file with one URL per line
+  -w WARN_DAYS, --warn-days WARN_DAYS
+                        warn when this many days or fewer remain (default: 30)
+  -t TIMEOUT, --timeout TIMEOUT
+                        seconds to wait per host (default: 5)
+
+examples:
+  python3 python/monitoring/ssl_expiry_check.py https://example.com https://github.com
+  python3 python/monitoring/ssl_expiry_check.py --file urls.txt --warn-days 14
+  python3 python/monitoring/ssl_expiry_check.py -h
+$ echo $?
+0

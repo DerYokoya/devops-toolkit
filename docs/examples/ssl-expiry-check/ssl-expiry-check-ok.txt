@@ -1,1 +1,8 @@
-TODO
+$ python3 python/monitoring/ssl_expiry_check.py https://example.com https://github.com
+URL                   DAYS  STATUS   DETAIL
+https://example.com     90  OK
+https://github.com     120  OK
+
+All 2 certificates OK
+$ echo $?
+0

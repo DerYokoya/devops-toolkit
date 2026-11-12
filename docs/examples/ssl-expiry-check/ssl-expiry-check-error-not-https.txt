@@ -1,1 +1,6 @@
-TODO
+$ python3 python/monitoring/ssl_expiry_check.py http://example.com
+usage: ssl_expiry_check.py [-h] [-f FILE] [-w WARN_DAYS] [-t TIMEOUT]
+                           [urls ...]
+ssl_expiry_check.py: error: not an https URL: http://example.com
+$ echo $?
+2

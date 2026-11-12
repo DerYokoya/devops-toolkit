@@ -1,1 +1,7 @@
-TODO
+$ python3 python/monitoring/ssl_expiry_check.py https://expired.example
+URL                       DAYS  STATUS   DETAIL
+https://expired.example      -  EXPIRED  certificate has expired
+
+1 of 1 need attention
+$ echo $?
+1
