@@ -110,6 +110,26 @@ pip install -r requirements.txt
 chmod +x bash/**/*.sh
 ```
 
+### Executable Python scripts
+
+Python files with a shebang (`#!/usr/bin/env python3`) must be executable
+because Ruff checks their file mode. When adding or committing one, stage it
+with:
+
+```bash
+git add --chmod=+x path/to/script.py
+```
+
+Verify the mode with:
+
+```bash
+git ls-files --stage -- path/to/script.py
+```
+
+The file should show mode `100755`, not `100644`. Here, `755` means the
+owner can read(4), write(2), and execute(1); everyone else can read(4) and execute(1).
+Ordinary Python modules without a shebang do not need executable permission.
+
 ### Install the pre-commit hook
 
 Install the repository's pre-commit checks so they run automatically before
