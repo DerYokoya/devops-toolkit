@@ -1,1 +1,4 @@
-TODO
+$ python3 python/reporting/log_analyzer.py missing-app.log
+error: file not found: missing-app.log
+$ echo $?
+1

@@ -1,1 +1,19 @@
-TODO
+$ python3 python/reporting/log_analyzer.py --help
+usage: log_analyzer.py [-h] [-d DATE] [-n TOP] files [files ...]
+
+Summarize JSON-lines application logs (one JSON object per line with a 'level' and, optionally, 'time', 'endpoint', 'duration_ms' and 'message'). Reports the error rate, the most common errors and the slowest endpoints. Lines that are not valid records are skipped and counted.
+
+positional arguments:
+  files            log files to read
+
+options:
+  -h, --help       show this help message and exit
+  -d DATE, --date DATE  only count records from this day
+  -n TOP, --top TOP    rows per list (default: 3)
+
+examples:
+  python3 python/reporting/log_analyzer.py tests/fixtures/app-sample.log
+  python3 python/reporting/log_analyzer.py app.log --date 2026-11-10 --top 5
+  python3 python/reporting/log_analyzer.py -h
+$ echo $?
+0

@@ -1,1 +1,11 @@
-TODO
+$ python3 python/reporting/log_analyzer.py tests/fixtures/app-sample.log --top 1
+Records: 12 (3 unreadable line(s) skipped)
+Errors: 5 (41.7%)
+
+Top errors (up to 1):
+     2  database timeout
+
+Slowest endpoints by average time (up to 1):
+  /api/orders             700.0 ms  (4 requests)
+$ echo $?
+0
