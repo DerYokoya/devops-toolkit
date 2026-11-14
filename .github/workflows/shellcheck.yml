@@ -22,3 +22,9 @@ jobs:
           # Lint every .sh file in the repo (skips .git); -r means do nothing if none exist
           find . -type f -name "*.sh" -not -path "./.git/*" -print0 \
             | xargs -0 -r shellcheck --severity=style --external-sources
+
+      - name: Run Bash tests
+        run: |
+          for test in tests/bash/test_*.sh; do
+            bash "$test"
+          done

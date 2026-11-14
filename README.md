@@ -209,6 +209,9 @@ shellcheck bash/**/*.sh
 
 # Run Python tests
 pytest tests/python
+
+# Run Bash tests
+for test in tests/bash/test_*.sh; do bash "$test"; done
 ```
 
 GitHub Actions runs both on every push.
