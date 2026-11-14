@@ -1,0 +1,13 @@
+$ mkdir -p downloads
+$ touch downloads/{README,photo.JPG,notes.txt}
+$ python3 python/files/organize_files.py downloads --apply
+README -> no-extension/README
+notes.txt -> txt/notes.txt
+photo.JPG -> jpg/photo.JPG
+Moved 3 file(s)
+$ echo $?
+0
+$ find downloads -maxdepth 2 -type f | sort
+downloads/jpg/photo.JPG
+downloads/no-extension/README
+downloads/txt/notes.txt

@@ -1,0 +1,7 @@
+$ mkdir -p downloads/{jpg,txt}
+$ touch downloads/jpg/photo.jpg downloads/txt/notes.txt
+$ python3 python/files/organize_files.py downloads
+DRY RUN (default): nothing will be moved. Use --apply to move the files.
+nothing to move
+$ echo $?
+0

@@ -1,0 +1,10 @@
+$ mkdir -p downloads
+$ touch -d "2026-01-15 12:00" downloads/january.log
+$ touch -d "2026-03-15 12:00" downloads/march.log
+$ python3 python/files/organize_files.py downloads --by date
+DRY RUN (default): nothing will be moved. Use --apply to move the files.
+january.log -> 2026-01/january.log
+march.log -> 2026-03/march.log
+Would move 2 file(s). Re-run with --apply to move them.
+$ echo $?
+0

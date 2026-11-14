@@ -1,0 +1,17 @@
+$ mkdir -p downloads/already
+$ touch downloads/{README,photo.JPG,notes.txt,.hidden}
+$ touch downloads/already/inside.txt
+$ python3 python/files/organize_files.py downloads
+DRY RUN (default): nothing will be moved. Use --apply to move the files.
+README -> no-extension/README
+notes.txt -> txt/notes.txt
+photo.JPG -> jpg/photo.JPG
+Would move 3 file(s). Re-run with --apply to move them.
+$ echo $?
+0
+$ find downloads -maxdepth 2 -type f | sort
+downloads/.hidden
+downloads/README
+downloads/already/inside.txt
+downloads/notes.txt
+downloads/photo.JPG

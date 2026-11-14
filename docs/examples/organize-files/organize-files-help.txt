@@ -1,0 +1,21 @@
+$ python3 python/files/organize_files.py --help
+usage: organize_files.py [-h] [--by {extension,date}] [--apply] directory
+
+Sort the files directly inside a folder into subfolders, either by extension (photo.JPG goes to jpg/) or by modification month (2026-11/). Dry run by default: nothing moves unless you pass --apply. Existing files are never overwritten; a clashing name gets a ' (1)' suffix. Subfolders, hidden files and symlinks are ignored.
+
+positional arguments:
+  directory             folder to organize
+
+options:
+  -h, --help            show this help message and exit
+  --by {extension,date}
+                        how to sort the files (default: extension)
+  --apply               actually move the files (default: dry run)
+
+examples:
+  python3 python/files/organize_files.py ~/Downloads
+  python3 python/files/organize_files.py ~/Downloads --apply
+  python3 python/files/organize_files.py ~/Downloads --by date --apply
+  python3 python/files/organize_files.py -h
+$ echo $?
+0

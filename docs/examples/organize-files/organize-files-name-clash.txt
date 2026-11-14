@@ -1,0 +1,10 @@
+$ mkdir -p downloads/jpg
+$ touch downloads/jpg/photo.jpg downloads/photo.jpg
+$ python3 python/files/organize_files.py downloads --apply
+photo.jpg -> jpg/photo (1).jpg
+Moved 1 file(s)
+$ echo $?
+0
+$ find downloads -maxdepth 2 -type f | sort
+downloads/jpg/photo (1).jpg
+downloads/jpg/photo.jpg
