@@ -30,19 +30,19 @@ EOF
 chmod +x "$TEMP_DIR/bin/df" "$TEMP_DIR/bin/free"
 
 log_file="$TEMP_DIR/monitor.log"
-ok_output="$(PATH="$TEMP_DIR/bin:$PATH" MONITOR_LOG="$log_file" "$SCRIPT" 50 20)" \
+ok_output="$(PATH="$TEMP_DIR/bin:$PATH" MONITOR_LOG="$log_file" bash "$SCRIPT" 50 20)" \
     || fail "usage at the configured limits should succeed"
 assert_contains "$ok_output" "OK: usage is within both limits."
 [[ ! -e "$log_file" ]] || fail "healthy usage should not create an alert log"
 
-if breach_output="$(PATH="$TEMP_DIR/bin:$PATH" MONITOR_LOG="$log_file" "$SCRIPT" 40 10 2>&1)"; then
+if breach_output="$(PATH="$TEMP_DIR/bin:$PATH" MONITOR_LOG="$log_file" bash "$SCRIPT" 40 10 2>&1)"; then
     fail "usage over both limits should fail"
 fi
 assert_contains "$breach_output" "disk / is 50% full"
 assert_contains "$breach_output" "RAM is 20% in use"
 assert_contains "$( < "$log_file" )" "ALERT:"
 
-if "$SCRIPT" 0 75 >"$TEMP_DIR/invalid-output" 2>&1; then
+if bash "$SCRIPT" 0 75 >"$TEMP_DIR/invalid-output" 2>&1; then
     fail "zero storage limit should fail"
 fi
 assert_contains "$( < "$TEMP_DIR/invalid-output" )" "STORAGE_LIMIT must be a whole number"

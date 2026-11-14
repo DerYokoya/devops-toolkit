@@ -16,7 +16,7 @@ assert_contains() {
     [[ "$haystack" == *"$needle"* ]] || fail "expected output to contain: $needle"
 }
 
-help_output="$("$SCRIPT" --help)" || fail "--help should succeed"
+help_output="$(bash "$SCRIPT" --help)" || fail "--help should succeed"
 assert_contains "$help_output" "Usage:"
 
 mkdir "$TEMP_DIR/logs"
@@ -30,7 +30,7 @@ touch -d "10 days ago" "$TEMP_DIR/logs/middle.log"
 touch -d "20 days ago" "$TEMP_DIR/logs/old.log"
 touch -d "1 day ago" "$TEMP_DIR/logs/fresh.log"
 
-if dry_run_output="$(cd "$TEMP_DIR" && "$SCRIPT" 7 14 2>&1)"; then
+if dry_run_output="$(cd "$TEMP_DIR" && bash "$SCRIPT" 7 14 2>&1)"; then
     :
 else
     fail "dry run should succeed"
@@ -40,7 +40,7 @@ assert_contains "$dry_run_output" "Would delete 1 log file(s)"
 [[ -f "$TEMP_DIR/logs/middle.log" ]] || fail "dry run should preserve compressible logs"
 [[ -f "$TEMP_DIR/logs/old.log" ]] || fail "dry run should preserve old logs"
 
-apply_output="$(cd "$TEMP_DIR" && "$SCRIPT" --apply 7 14 2>&1)" || fail "apply should succeed"
+apply_output="$(cd "$TEMP_DIR" && bash "$SCRIPT" --apply 7 14 2>&1)" || fail "apply should succeed"
 assert_contains "$apply_output" "Compressed 1 file(s)"
 assert_contains "$apply_output" "Deleted 1 log file(s)"
 [[ ! -f "$TEMP_DIR/logs/middle.log" ]] || fail "compressed log should be removed"
@@ -50,7 +50,7 @@ assert_contains "$apply_output" "Deleted 1 log file(s)"
 archive_count="$(find "$TEMP_DIR/logs" -maxdepth 1 -type f -name 'logs-*.tar.gz' | wc -l | tr -d ' ')"
 [[ "$archive_count" -eq 1 ]] || fail "expected one log archive, found $archive_count"
 
-if "$SCRIPT" 14 7 >"$TEMP_DIR/invalid-output" 2>&1; then
+if bash "$SCRIPT" 14 7 >"$TEMP_DIR/invalid-output" 2>&1; then
     fail "reversed age range should fail"
 fi
 assert_contains "$( < "$TEMP_DIR/invalid-output" )" "AGE_YOUNG must be less than AGE_OLD"

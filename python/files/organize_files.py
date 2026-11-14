@@ -63,6 +63,7 @@ def apply_moves(moves):
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(source, destination)
 
+
 def main():
     parser = argparse.ArgumentParser(
         description="Sort the files directly inside a folder into subfolders, either by "
