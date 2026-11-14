@@ -47,6 +47,8 @@ def plan_moves(directory, by="extension"):
             skipped.append((path, exc.strerror))
             continue
         if folder.exists() and not folder.is_dir():
+            # !r calls repr(), which produces a representation of the object.
+            # For strings, that representation includes quotes.
             skipped.append((path, f"a file named {folder.name!r} is in the way"))
             continue
         destination = unique_destination(folder / path.name, taken)
@@ -58,9 +60,8 @@ def plan_moves(directory, by="extension"):
 def apply_moves(moves):
     """Create the subfolders and move the files. The only function that changes anything."""
     for source, destination in moves:
-        destination.parent.mkdir(exist_ok=True)
+        destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.move(source, destination)
-
 
 def main():
     parser = argparse.ArgumentParser(
