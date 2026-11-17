@@ -9,7 +9,12 @@ from pathlib import Path
 
 import pytest
 
-SCRIPT = Path(__file__).resolve().parents[2] / "python" / "scaffolding" / "bootstrap_project.py"
+SCRIPT = (
+    Path(__file__).resolve().parents[2]
+    / "python"
+    / "scaffolding"
+    / "bootstrap_project.py"
+)
 
 spec = importlib.util.spec_from_file_location("bootstrap_project", SCRIPT)
 bp = importlib.util.module_from_spec(spec)
@@ -110,7 +115,9 @@ def test_main_uses_folder_name_by_default(tmp_path, monkeypatch):
 
 def test_main_name_and_author_options(tmp_path, monkeypatch):
     project = tmp_path / "x"
-    run_main(monkeypatch, project, "--no-git", "--name", "Cool Tool", "--author", "Jane")
+    run_main(
+        monkeypatch, project, "--no-git", "--name", "Cool Tool", "--author", "Jane"
+    )
     assert (project / "README.md").read_text(encoding="utf-8").startswith("# Cool Tool")
     assert "Jane" in (project / "LICENSE").read_text(encoding="utf-8")
 
@@ -169,7 +176,10 @@ def test_gitignore_rules_work(tmp_path, monkeypatch):
 
     def ignored(path):
         result = subprocess.run(
-            ["git", "check-ignore", "-q", path], cwd=project, capture_output=True, check=False
+            ["git", "check-ignore", "-q", path],
+            cwd=project,
+            capture_output=True,
+            check=False,
         )
         return result.returncode == 0
 
