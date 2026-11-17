@@ -199,7 +199,7 @@ def write_files(folder, files, dry_run):
             print(f"would create {rel_path}")
             continue
         target.parent.mkdir(parents=True, exist_ok=True)
-        try: # "x" instead of "w" because "w" would overwrite an existing file
+        try:  # "x" instead of "w" because "w" would overwrite an existing file
             with open(target, "x", encoding="utf-8") as f:
                 f.write(content)
         except FileExistsError:
@@ -216,8 +216,10 @@ def init_git(folder, dry_run):
     if shutil.which("git") is None:
         print("error: git is not installed or not on PATH", file=sys.stderr)
         return False
-    try: # Instead of adding a git dependency
-        subprocess.run(["git", "init", str(folder)], check=True, capture_output=True, text=True)
+    try:  # Instead of adding a git dependency
+        subprocess.run(
+            ["git", "init", str(folder)], check=True, capture_output=True, text=True
+        )
     except subprocess.CalledProcessError as err:
         print(f"error: git init failed: {err.stderr.strip()}", file=sys.stderr)
         return False
@@ -235,11 +237,21 @@ def main():
   python3 python/scaffolding/bootstrap_project.py ~/projects/my-app --author "Jane Doe" --dry-run""",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("directory", type=Path, help="folder to create the project in (created if missing)")
+    parser.add_argument(
+        "directory",
+        type=Path,
+        help="folder to create the project in (created if missing)",
+    )
     parser.add_argument("--name", help="project name (default: the folder name)")
-    parser.add_argument("--author", default="<copyright holder>", help="name for the LICENSE")
+    parser.add_argument(
+        "--author", default="<copyright holder>", help="name for the LICENSE"
+    )
     parser.add_argument("--no-git", action="store_true", help="skip git init")
-    parser.add_argument("--dry-run", action="store_true", help="show what would be created, change nothing")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="show what would be created, change nothing",
+    )
     args = parser.parse_args()
 
     folder = args.directory.expanduser().resolve()
