@@ -1,233 +1,264 @@
 #!/usr/bin/env python3
-"""Instantly seeds a pristine code repo with a standardized folder framework, custom .gitignore, README, and unit testing boilerplate."""
+"""Seed a project folder with a standard layout, README, .gitignore, LICENSE and a starter test."""
 
 import argparse
 import shutil
+import subprocess
 import sys
-import time
-from pathlib import Path
-from git import Repo
 from datetime import date
-import os
+from pathlib import Path
 
-def apply_moves(moves):
-    """Create the subfolders and move the files. The only function that changes anything."""
-    for source, destination in moves:
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.move(source, destination)
+DIRECTORIES = ["docs", "tests", "scripts", "config", ".github/workflows", "src"]
+# Folders that already receive a real file, so they don't need a .gitkeep.
+NO_GITKEEP = {"tests"}
 
-def create_repo(folder):
-    repo = Repo.init(folder)
-    print("Repo created.")
-    print(".git folder created")
-    create_markdown(folder)
-    print("Markdown files created")
-    create_empty_folders(folder)
-    print("Empty folders created")
-    create_gitignore(folder)
-    print("Created .gitignore")
-    create_license(folder)
-    print("LICENSE created")
+README_TEMPLATE = """\
+# __NAME__
 
-def create_markdown(folder):
-    default_markdown = {"README": "# PROJECT NAME\n"\
-                        "============\n"\
-                        "\n"\
-                        "Simple overview of use/purpose, and how to contribute to this project.\n"\
-                        "\n"\
-                        "### Build command\n"\
-                        "\n"\
-                        "* How to build/run the program from source\n"\
-                        "* Step-by-step bullets\n"\
-                        "```\n"\
-                        "code blocks for commands\n"\
-                        "```\n"\
-                        "\n"\
-                        "### Install command\n"\
-                        "\n"\
-                        "* Prerequisites, libraries, OS version, etc. needed before installing (ex. Windows 10)\n"\
-                        "* How/where to download the program\n"\
-                        "* Any modifications needed to files/folders\n"\
-                        "```\n"\
-                        "code blocks for commands\n"\
-                        "```\n"\
-                        "\n"\
-                        "### Environment Variables\n"\
-                        "\n"\
-                        "* VARIABLE_NAME: description of what it does and its default value\n"\
-                        "* ANOTHER_VARIABLE: description\n"\
-                        "\n"\
-                        "### Private Branches & Tags\n"\
-                        "\n"\
-                        "* Branch naming conventions (ex. feature/<name>, bugfix/<name>)\n"\
-                        "* Tagging and versioning rules (ex. 0.1 - Initial Release, 0.2 - Bug fixes)\n"\
-                        "* See [commit change]() or [release history]()\n"\
-                        "\n"\
-                        "## Tips & Tricks\n"\
-                        "\n"\
-                        "Advice for common problems or issues.\n"\
-                        "```\n"\
-                        "command to run if program contains helper info\n"\
-                        "```\n"\
-                        "\n",
-                        "CHANGELOG": "# Change Log\n"\
-                        "All notable changes to this project will be documented in this file.\n"\
-                        "\n"\
-                        "The format is based on [Keep a Changelog](http://keepachangelog.com/)\n"\
-                        "and this project adheres to [Semantic Versioning](http://semver.org/).\n"\
-                        "\n"\
-                        "## [Unreleased] - yyyy-mm-dd\n"\
-                        "\n"\
-                        "Here we write upgrading notes for brands. It's a team effort to make them as\n"\
-                        "straightforward as possible.\n"\
-                        "\n"\
-                        "### Added\n"\
-                        "- [PROJECTNAME-XXXX](http://tickets.projectname.com/browse/PROJECTNAME-XXXX)\n"\
-                        "  MINOR Ticket title goes here.\n"\
-                        "- [PROJECTNAME-YYYY](http://tickets.projectname.com/browse/PROJECTNAME-YYYY)\n"\
-                        "  PATCH Ticket title goes here.\n"\
-                        "\n"\
-                        "### Changed\n"\
-                        "\n"\
-                        "### Fixed\n"\
-                        "\n"\
-                        "## [1.2.4] - 2017-03-15\n"\
-                        "\n"\
-                        "Here we would have the update steps for 1.2.4 for people to follow.\n"\
-                        "\n"\
-                        "### Added\n"\
-                        "\n"\
-                        "### Changed\n"\
-                        "\n"\
-                        "- [PROJECTNAME-ZZZZ](http://tickets.projectname.com/browse/PROJECTNAME-ZZZZ)\n"\
-                        "  PATCH Drupal.org is now used for composer.\n"\
-                        "\n"\
-                        "### Fixed\n"\
-                        "\n"\
-                        "- [PROJECTNAME-TTTT](http://tickets.projectname.com/browse/PROJECTNAME-TTTT)\n"\
-                        "  PATCH Add logic to runsheet teaser delete to delete corresponding\n"\
-                        "  schedule cards.\n"\
-                        "\n"\
-                        "## [1.2.3] - 2017-03-14\n"\
-                        "\n"\
-                        "### Added\n"\
-                        "\n"\
-                        "### Changed\n"\
-                        "\n"\
-                        "### Fixed\n"\
-                        "\n", 
-                        "CONTRIBUTING": "# CONTRIBUTING\n"\
-                        "============\n"\
-                        "\n"\
-                        "### Build command\n"\
-                        "### Install command"\
-                        "### Environment Variables"\
-                        "### Private Branches & Tags"\
-                        "## Tips & Tricks"}
+Simple overview of the purpose of this project.
 
-    for md_file, content in default_markdown:        
-        with open(folder/md_file.join("md"), 'w') as f:
-            f.write(content)
+## Build
 
-def create_empty_folders(folder):
-    directories = ["docs", "tests", "scripts", "config", ".github/workflows", "src/main", "src/test"]
+```
+commands to build or run from source
+```
 
-    for dir in directories:
-        os.mkdir(folder/dir)
+## Install
 
-def create_gitignore(folder):
-    GITIGNORE_TEMPLATE = "# ----Secrets ----\n"\
-                     ".env\n"\
-                     ".env.*\n"\
-                     ".env.*.local\n"\
-                     "!.env.example\n"\
-                     "\n"\
-                     "# --Dependencies --\n"\
-                     "node_modules/\n"\
-                     "venv/\n"\
-                     ".venv/\n"\
-                     "__pycache__/\n"\
-                     "*.py[cod]\n"\
-                     "\n"\
-                     "# --Build Output --\n"\
-                     "dist/\n"\
-                     "build/\n"\
-                     "out/\n"\
-                     "target/\n"\
-                     "*.class\n"\
-                     "*.jar\n"\
-                     "\n"\
-                     "# -- Logs & Temp ----\n"\
-                     "*.log\n"\
-                     "logs/\n"\
-                     "*.tmp\n"\
-                     "*.temp\n"\
-                     "*.cache\n"\
-                     "*.bak\n"\
-                     "\n"\
-                     "# -- OS Files---\n"\
-                     ".DS_Store\n"\
-                     "Thumbs.db\n"\
-                     "*~\n"\
-                     "\n"\
-                     "# --IDE Files -----\n"\
-                     ".idea/\n"\
-                     ".vscode/\n"\
-                     "!.vscode/extensions.json\n"\
-                     "*.iml\n"\
-                     "*.swp\n"\
-                     "\n"\
-                     "# ---- Test & Coverage ---\n"\
-                     "coverage/\n"\
-                     ".nyc_output/\n"\
-                     ".pytest_cache/\n"\
-                     ".coverage\n"\
-                     "htmlcov/\n"\
-                     "\n"\
-                     "# -- Infrastructure ---\n"\
-                     ".terraform/\n"\
-                     "*.tfstate\n"\
-                     "*.tfstate.*\n"\
-                     "*.tfvars\n"\
-                     "!*.tfvars.example\n"\
-                     ".aws/credentials\n"
+* Prerequisites (libraries, OS version, etc.)
+* How to download or install the program
 
-    with open(folder/".gitignore") as f:
-        f.write(GITIGNORE_TEMPLATE)
+## Environment variables
 
-def create_license(folder):
-    today = date.today()
-    this_year = str(today.strftime("%Y"))
+* `VARIABLE_NAME`: what it does and its default value
 
-    LICENSE_TEMPLATE = "Copyright (c)" + this_year + "<copyright holders>\n"\
-                   "\n"\
-                   "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n"\
-                   "\n"\
-                   "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n"\
-                   "\n"\
-                   "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n"
+## Branches and tags
 
-    with open(folder/"LICENSE") as f:
-        f.write(LICENSE_TEMPLATE)
+* Branch naming (for example `feature/<name>`, `bugfix/<name>`)
+* Versioning rules (for example `0.1` initial release)
+
+## Tips and tricks
+
+Advice for common problems.
+"""
+
+CHANGELOG_TEMPLATE = """\
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/)
+and this project adheres to [Semantic Versioning](https://semver.org/).
+
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Fixed
+"""
+
+CONTRIBUTING_TEMPLATE = """\
+# Contributing to __NAME__
+
+Thanks for helping out. Please follow these steps:
+
+1. Fork the repository and create a branch (`feature/<name>` or `bugfix/<name>`).
+2. Make your change and add or update tests in `tests/`.
+3. Run the linters and tests locally before committing.
+4. Open a pull request that explains what changed and why.
+5. Add a line to `CHANGELOG.md` under **Unreleased**.
+"""
+
+GITIGNORE_TEMPLATE = """\
+# Secrets
+.env
+.env.*
+.env.*.local
+!.env.example
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Build output
+dist/
+build/
+out/
+target/
+*.class
+*.jar
+
+# Logs and temp
+*.log
+logs/
+*.tmp
+*.temp
+*.cache
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+*~
+
+# IDE files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.iml
+*.swp
+
+# Tests and coverage
+coverage/
+.nyc_output/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Infrastructure
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.aws/credentials
+"""
+
+LICENSE_TEMPLATE = """\
+MIT License
+
+Copyright (c) __YEAR__ __AUTHOR__
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+TEST_TEMPLATE = '''\
+"""Starter test. Replace with real tests for your project."""
+
+
+def test_smoke():
+    assert True
+'''
+
+
+def render(template, name, author):
+    """Fill the placeholders in a template."""
+    return (
+        template.replace("__NAME__", name)
+        .replace("__AUTHOR__", author)
+        .replace("__YEAR__", str(date.today().year))
+    )
+
+
+def build_plan(name, author):
+    """Return {relative path: content} for every file to create."""
+    files = {
+        "README.md": render(README_TEMPLATE, name, author),
+        "CHANGELOG.md": CHANGELOG_TEMPLATE,
+        "CONTRIBUTING.md": render(CONTRIBUTING_TEMPLATE, name, author),
+        ".gitignore": GITIGNORE_TEMPLATE,
+        "LICENSE": render(LICENSE_TEMPLATE, name, author),
+        "tests/test_smoke.py": TEST_TEMPLATE,
+    }
+    for directory in DIRECTORIES:
+        # dir shadows a builtin, and git doesn’t track empty folders
+        # so a .gitkeep is needed in each
+        if directory not in NO_GITKEEP:
+            # "md".join("README") gives "RmdEmdAmdDmdMmdE".
+            files[f"{directory}/.gitkeep"] = ""
+    return files
+
+
+def write_files(folder, files, dry_run):
+    """Create each file, never overwriting one that already exists."""
+    # With .items(), it'd iterate over the dict’s keys only (file names)
+    for rel_path, content in files.items():
+        target = folder / rel_path
+        if dry_run:
+            print(f"would create {rel_path}")
+            continue
+        target.parent.mkdir(parents=True, exist_ok=True)
+        try: # "x" instead of "w" because "w" would overwrite an existing file
+            with open(target, "x", encoding="utf-8") as f:
+                f.write(content)
+        except FileExistsError:
+            print(f"skipped {rel_path} (already exists)")
+        else:
+            print(f"created {rel_path}")
+
+
+def init_git(folder, dry_run):
+    """Run `git init` in the folder. Returns True on success."""
+    if dry_run:
+        print("would run git init")
+        return True
+    if shutil.which("git") is None:
+        print("error: git is not installed or not on PATH", file=sys.stderr)
+        return False
+    try: # Instead of adding a git dependency
+        subprocess.run(["git", "init", str(folder)], check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as err:
+        print(f"error: git init failed: {err.stderr.strip()}", file=sys.stderr)
+        return False
+    print("initialized git repository")
+    return True
+
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Build boilerplate templates or string skeletons internally. " \
-        "Scaffold folder architectures reliably using pathlib or os." \
-        "Output matching project components (README.md, .gitignore, test directories)."
-        "(Optional) Initialize a local git repo within the targeted folder scope",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="Create a project skeleton: standard folders, README, CHANGELOG, "
+        "CONTRIBUTING, .gitignore, MIT LICENSE, a starter test, and a git repo. "
+        "Existing files are never overwritten.",
         epilog="""examples:
-  python3 python/scaffolding/bootstrap_project.py ~/Downloads
-  python3 python/scaffolding/bootstrap_project.py -h""",
+  python3 python/scaffolding/bootstrap_project.py ~/projects/my-app
+  python3 python/scaffolding/bootstrap_project.py ~/projects/my-app --author "Jane Doe" --dry-run""",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("directory", type=Path, help="folder to create the repo in")
+    parser.add_argument("directory", type=Path, help="folder to create the project in (created if missing)")
+    parser.add_argument("--name", help="project name (default: the folder name)")
+    parser.add_argument("--author", default="<copyright holder>", help="name for the LICENSE")
+    parser.add_argument("--no-git", action="store_true", help="skip git init")
+    parser.add_argument("--dry-run", action="store_true", help="show what would be created, change nothing")
     args = parser.parse_args()
 
-    if not args.directory.is_dir():
-        print(f"error: not a folder: {args.directory}", file=sys.stderr)
+    folder = args.directory.expanduser().resolve()
+    if folder.exists() and not folder.is_dir():
+        print(f"error: not a folder: {folder}", file=sys.stderr)
         return 1
-    
+
+    name = args.name or folder.name
+    files = build_plan(name, args.author)
+
+    if not args.dry_run:
+        folder.mkdir(parents=True, exist_ok=True)
+
+    write_files(folder, files, args.dry_run)
+
+    if not args.no_git and not init_git(folder, args.dry_run):
+        return 1
+
+    print("Dry run complete." if args.dry_run else f"Project ready in {folder}")
     return 0
 
 
