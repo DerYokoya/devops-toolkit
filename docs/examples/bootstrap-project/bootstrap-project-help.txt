@@ -1,0 +1,22 @@
+$ python3 python/scaffolding/bootstrap_project.py --help
+usage: bootstrap_project.py [-h] [--name NAME] [--author AUTHOR] [--no-git]
+                            [--dry-run]
+                            directory
+
+Create a project skeleton: standard folders, README, CHANGELOG, CONTRIBUTING, .gitignore, MIT LICENSE, a starter test, and a git repo. Existing files are never overwritten.
+
+positional arguments:
+  directory        folder to create the project in (created if missing)
+
+options:
+  -h, --help       show this help message and exit
+  --name NAME      project name (default: the folder name)
+  --author AUTHOR  name for the LICENSE
+  --no-git         skip git init
+  --dry-run        show what would be created, change nothing
+
+examples:
+  python3 python/scaffolding/bootstrap_project.py ~/projects/my-app
+  python3 python/scaffolding/bootstrap_project.py ~/projects/my-app --author "Jane Doe" --dry-run
+$ echo $?
+0

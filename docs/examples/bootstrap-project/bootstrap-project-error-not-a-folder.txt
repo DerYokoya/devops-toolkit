@@ -1,0 +1,4 @@
+$ python3 python/scaffolding/bootstrap_project.py notes.txt
+error: not a folder: notes.txt
+$ echo $?
+1

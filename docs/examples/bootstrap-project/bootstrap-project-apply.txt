@@ -1,0 +1,28 @@
+$ python3 python/scaffolding/bootstrap_project.py my-app --author "Jane Doe"
+created README.md
+created CHANGELOG.md
+created CONTRIBUTING.md
+created .gitignore
+created LICENSE
+created tests/test_smoke.py
+created docs/.gitkeep
+created scripts/.gitkeep
+created config/.gitkeep
+created .github/workflows/.gitkeep
+created src/.gitkeep
+initialized git repository
+Project ready in my-app
+$ echo $?
+0
+$ find my-app -path my-app/.git -prune -o -type f -print | sort
+my-app/.github/workflows/.gitkeep
+my-app/.gitignore
+my-app/CHANGELOG.md
+my-app/CONTRIBUTING.md
+my-app/LICENSE
+my-app/README.md
+my-app/config/.gitkeep
+my-app/docs/.gitkeep
+my-app/scripts/.gitkeep
+my-app/src/.gitkeep
+my-app/tests/test_smoke.py

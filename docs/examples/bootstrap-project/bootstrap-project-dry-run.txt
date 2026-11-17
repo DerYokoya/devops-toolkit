@@ -1,0 +1,18 @@
+$ python3 python/scaffolding/bootstrap_project.py my-app --dry-run
+would create README.md
+would create CHANGELOG.md
+would create CONTRIBUTING.md
+would create .gitignore
+would create LICENSE
+would create tests/test_smoke.py
+would create docs/.gitkeep
+would create scripts/.gitkeep
+would create config/.gitkeep
+would create .github/workflows/.gitkeep
+would create src/.gitkeep
+would run git init
+Dry run complete.
+$ echo $?
+0
+$ test -e my-app || echo 'my-app was not created'
+my-app was not created

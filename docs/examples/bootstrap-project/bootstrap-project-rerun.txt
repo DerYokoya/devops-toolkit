@@ -1,0 +1,19 @@
+$ python3 python/scaffolding/bootstrap_project.py my-app --no-git > /dev/null
+$ echo 'my own notes' > my-app/README.md
+$ python3 python/scaffolding/bootstrap_project.py my-app --no-git
+skipped README.md (already exists)
+skipped CHANGELOG.md (already exists)
+skipped CONTRIBUTING.md (already exists)
+skipped .gitignore (already exists)
+skipped LICENSE (already exists)
+skipped tests/test_smoke.py (already exists)
+skipped docs/.gitkeep (already exists)
+skipped scripts/.gitkeep (already exists)
+skipped config/.gitkeep (already exists)
+skipped .github/workflows/.gitkeep (already exists)
+skipped src/.gitkeep (already exists)
+Project ready in my-app
+$ echo $?
+0
+$ cat my-app/README.md
+my own notes
