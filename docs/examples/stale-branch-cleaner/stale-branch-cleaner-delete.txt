@@ -1,0 +1,24 @@
+$ ./bash/git/stale-branch-cleaner.sh --delete
+Fetching latest data from 'origin'...
+
+Base branch: origin/main
+Stale means: not merged and no commits since 2025-11-19 (12 months)
+
+Merged into origin/main:
+  local  feature/merged-old                       4cc1e91  2024-11-19
+  remote feature/merged-old                       4cc1e91  2024-11-19
+
+Not merged, but untouched for 12+ months:
+  local  local-unpushed                           0595ef6  2024-11-19  [UNPUSHED COMMITS]
+  remote feature/stale                            9a1cb81  2024-11-19
+
+Delete 2 local and 2 remote branch(es)? Remote deletions cannot be undone by this script. [y/N] y
+Deleted branch feature/merged-old (was 4cc1e91).
+Deleted branch local-unpushed (was 0595ef6).
+Deleted remote branch origin/feature/merged-old
+Deleted remote branch origin/feature/stale
+
+Done: 4 deleted, 0 failed.
+
+# The "was <sha>" values are your undo: `git branch <name> <sha>` restores a
+# deleted local branch. Remote branches can be re-pushed from a local copy.

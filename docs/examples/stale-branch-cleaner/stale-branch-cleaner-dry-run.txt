@@ -1,0 +1,23 @@
+$ ./bash/git/stale-branch-cleaner.sh
+Fetching latest data from 'origin'...
+
+Base branch: origin/main
+Stale means: not merged and no commits since 2025-11-19 (12 months)
+
+Merged into origin/main:
+  local  feature/merged-old                       4cc1e91  2024-11-19
+  local  feature/merged-recent                    162fac9  2026-11-19
+  remote feature/merged-old                       4cc1e91  2024-11-19
+  remote feature/merged-recent                    162fac9  2026-11-19
+
+Not merged, but untouched for 12+ months:
+  local  feature/production                       afa237b  2024-11-19
+  local  feature/stale                            9a1cb81  2024-11-19
+  local  local-unpushed                           0595ef6  2024-11-19  [UNPUSHED COMMITS]
+  remote feature/production                       afa237b  2024-11-19
+  remote feature/stale                            9a1cb81  2024-11-19
+
+Dry run: nothing was deleted. Re-run with --delete to remove the branches above.
+
+# Not listed, on purpose: main, develop (protected), feature/fresh (recent),
+# and any branch that points exactly at main (a new branch with no commits yet).
