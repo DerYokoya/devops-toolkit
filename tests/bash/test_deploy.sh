@@ -83,7 +83,7 @@ setup_env() {
 make_tools() {
     local t
     # Real tools the deploy script itself needs.
-    for t in bash sh git flock date sleep; do
+    for t in bash sh git flock date sleep basename cat; do
         ln -s "$(command -v "$t")" "$TMP/bin/$t"
     done
     # Fakes that record their call.
@@ -140,6 +140,7 @@ setup_repo() {
 
 # push_upstream MESSAGE [BRANCH] : push a new commit to origin from the other clone
 push_upstream() {
+    git -C "$OTHER" fetch -q origin
     git -C "$OTHER" checkout -q "${2:-main}"
     (cd "$OTHER" && commit "$1" && git push -q origin "${2:-main}")
     UPSTREAM_SHA=$(git -C "$OTHER" rev-parse HEAD)
