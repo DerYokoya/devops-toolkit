@@ -191,6 +191,12 @@ Other systems may work but have not been tested.
 | `failed-login-detector.sh` | tested | untested | |
 | `disk-memory-monitor.sh` | tested | not supported | needs `free` (Linux only) |
 | `csv_cleaner.py` | tested | untested | Python 3.12 in CI |
+| `duplicate_finder.py` | tested | untested | |
+| `organize_files.py` | tested | untested | |
+| `health_check.py` | tested | untested | |
+| `ssl_expiry_check.py` | tested | untested | |
+| `log_analyzer.py` | tested | untested | |
+| `bootstrap_project.py` | tested | untested | |
 
 ### If something fails
 
