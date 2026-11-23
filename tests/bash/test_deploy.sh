@@ -286,7 +286,7 @@ test_untracked_files_do_not_block_deploy() {
 
 test_concurrent_deploy_is_refused() {
     setup_repo
-    local lock=$DEPLOY_LOCK_DIR/deploy-myapp.lock i
+    local lock=$DEPLOY_LOCK_DIR/deploy-myapp.lock
     flock "$lock" sleep 5 &
     local holder=$!
     for _ in {1..50}; do
@@ -302,7 +302,7 @@ test_concurrent_deploy_is_refused() {
 
 test_different_apps_do_not_share_a_lock() {
     setup_repo
-    local lock=$DEPLOY_LOCK_DIR/deploy-otherapp.lock i
+    local lock=$DEPLOY_LOCK_DIR/deploy-otherapp.lock
     flock "$lock" sleep 5 &
     local holder=$!
     for _ in {1..50}; do
