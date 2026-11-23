@@ -289,7 +289,7 @@ test_concurrent_deploy_is_refused() {
     local lock=$DEPLOY_LOCK_DIR/deploy-myapp.lock i
     flock "$lock" sleep 5 &
     local holder=$!
-    for i in $(seq 1 50); do
+    for _ in {1..50}; do
         if ! flock --nonblock "$lock" true 2>/dev/null; then break; fi
         sleep 0.1
     done
@@ -305,7 +305,7 @@ test_different_apps_do_not_share_a_lock() {
     local lock=$DEPLOY_LOCK_DIR/deploy-otherapp.lock i
     flock "$lock" sleep 5 &
     local holder=$!
-    for i in $(seq 1 50); do
+    for _ in {1..50}; do
         if ! flock --nonblock "$lock" true 2>/dev/null; then break; fi
         sleep 0.1
     done
