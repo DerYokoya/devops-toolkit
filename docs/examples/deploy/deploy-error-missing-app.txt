@@ -1,0 +1,37 @@
+$ ./bash/deployment/deploy.sh
+error: --app is required
+Usage: deploy.sh --app NAME [options]
+
+Deploys the current repository: pulls the latest code (fast-forward only),
+installs dependencies, runs database migrations, reloads the pm2 app and
+optionally checks that it came back up. Run it from inside the repository.
+
+Required:
+  --app NAME            pm2 app name to reload.
+
+Options:
+  --remote NAME         Git remote to pull from (default: origin).
+  --branch NAME         Branch to deploy. Must be the checked-out branch
+                        (default: the checked-out branch).
+  --health-url URL      After the reload, request this URL until it succeeds.
+  --health-retries N    Health-check attempts (default: 10).
+  --health-interval S   Seconds between attempts (default: 2).
+  -n, --dry-run         Run the preflight checks, then only print the steps.
+  -h, --help            Show this help message and exit.
+
+Environment:
+  DEPLOY_LOCK_DIR       Where the per-app lock file lives (default: $TMPDIR or /tmp).
+
+Requires: git, npm (7+), db-migrate, pm2, flock (and curl with --health-url).
+
+Exit status:
+  0    Deployed (or dry run completed).
+  1    Preflight failed, a step failed, or the health check failed.
+  2    Invalid command-line usage.
+
+Examples:
+  deploy.sh --app myapp
+  deploy.sh --app myapp --branch main --health-url http://localhost:3000/health
+  deploy.sh --app myapp --dry-run
+$ echo $?
+2

@@ -1,0 +1,20 @@
+$ ./bash/deployment/deploy.sh --app myapp --health-url http://localhost:3000/
+2026-11-23_17:23:03 Preflight OK: app=myapp remote=origin branch=main
+2026-11-23_17:23:03 Current commit: b629acf19b776e11f3d8dc839caf596549f45ef4
+2026-11-23_17:23:03 + git fetch origin main
+From /tmp/deploy-demo/origin
+ * branch            main       -> FETCH_HEAD
+2026-11-23_17:23:03 + git merge --ff-only FETCH_HEAD
+Updating b629acf..2a5b4b8
+Fast-forward
+ app.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+2026-11-23_17:23:03 + npm ci --omit=dev
+2026-11-23_17:23:03 + db-migrate up
+2026-11-23_17:23:03 + pm2 reload myapp
+2026-11-23_17:23:03 Health check passed (http://localhost:3000/, attempt 1/10)
+
+2026-11-23_17:23:03 Deployed myapp: b629acf -> 2a5b4b8
+To roll back the code: git reset --hard b629acf19b776e11f3d8dc839caf596549f45ef4 && npm ci --omit=dev && pm2 reload myapp
+$ echo $?
+0

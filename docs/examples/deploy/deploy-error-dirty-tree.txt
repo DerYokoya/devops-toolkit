@@ -1,0 +1,4 @@
+$ ./bash/deployment/deploy.sh --app myapp
+ERROR: working tree has uncommitted changes; commit or stash them first
+$ echo $?
+1
