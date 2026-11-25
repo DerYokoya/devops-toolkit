@@ -1,0 +1,29 @@
+$ sudo ./bash/admin/provision-users.sh --group developers users.txt
+2026-11-25_01:09:28 + useradd --create-home --shell /bin/bash --groups developers -- alice
+2026-11-25_01:09:28 alice: added key ssh-ed25519 ...iceAlice (alice@laptop)
+2026-11-25_01:09:28 alice: added key ssh-ed25519 ...ceSecond (alice@phone)
+2026-11-25_01:09:28 bob: already exists, leaving the account as it is
+2026-11-25_01:09:28 bob: key ssh-rsa ...obBobBob (bob@desktop) already present
+2026-11-25_01:09:28 + useradd --create-home --shell /bin/bash --groups developers -- carol
+2026-11-25_01:09:28 carol: no SSH key in the list, so this user cannot log in over SSH yet
+
+2026-11-25_01:09:28 Done: 2 created, 1 already existed, 2 key(s) added, 1 already present, 0 failed.
+
+# Safe to run again: nothing is duplicated and existing accounts are untouched.
+$ sudo ./bash/admin/provision-users.sh --group developers users.txt
+2026-11-25_01:09:28 alice: already exists, leaving the account as it is
+2026-11-25_01:09:28 alice: key ssh-ed25519 ...iceAlice (alice@laptop) already present
+2026-11-25_01:09:28 alice: key ssh-ed25519 ...ceSecond (alice@phone) already present
+2026-11-25_01:09:28 bob: already exists, leaving the account as it is
+2026-11-25_01:09:28 bob: key ssh-rsa ...obBobBob (bob@desktop) already present
+2026-11-25_01:09:28 carol: already exists, leaving the account as it is
+2026-11-25_01:09:28 carol: no SSH key in the list, so this user cannot log in over SSH yet
+
+2026-11-25_01:09:28 Done: 0 created, 3 already existed, 0 key(s) added, 3 already present, 0 failed.
+
+# What ends up on disk for each user with a key:
+#   ~/.ssh                   mode 700, owned by the user
+#   ~/.ssh/authorized_keys   mode 600, owned by the user
+# No password is set and no private key is generated; login is by SSH key only.
+# The output above comes from the test fixture (fake useradd/chown), so the
+# commands and messages are real but no real accounts were created.

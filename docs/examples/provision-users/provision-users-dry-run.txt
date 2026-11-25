@@ -1,0 +1,14 @@
+$ ./bash/admin/provision-users.sh --dry-run --group developers users.txt
+2026-11-25_01:09:28 Dry run: nothing will be changed.
+2026-11-25_01:09:28 [dry-run] would run: useradd --create-home --shell /bin/bash --groups developers -- alice
+2026-11-25_01:09:28 [dry-run] would add key ssh-ed25519 ...iceAlice (alice@laptop) to ~alice/.ssh/authorized_keys
+2026-11-25_01:09:28 [dry-run] would add key ssh-ed25519 ...ceSecond (alice@phone) to ~alice/.ssh/authorized_keys
+2026-11-25_01:09:28 bob: already exists, leaving the account as it is
+2026-11-25_01:09:28 bob: key ssh-rsa ...obBobBob (bob@desktop) already present
+2026-11-25_01:09:28 [dry-run] would run: useradd --create-home --shell /bin/bash --groups developers -- carol
+2026-11-25_01:09:28 carol: no SSH key in the list, so this user cannot log in over SSH yet
+
+2026-11-25_01:09:28 Dry run complete: 2 to create, 1 already exist, 2 key(s) to add, 1 already present, 0 problem(s). Nothing was changed.
+
+# A dry run does not need root, so anyone can preview a list. Keys are shown as
+# type + last 8 characters + comment, never in full.

@@ -1,0 +1,16 @@
+# users.txt: input for bash/admin/provision-users.sh
+#
+# One entry per line:   username  [ssh public key]
+#   - blank lines and lines starting with # are ignored
+#   - put the user's PUBLIC key here (the .pub file they send you); never a private key
+#   - give a user several keys by repeating their name on several lines
+#   - key options such as command="..." or from="..." are rejected
+#   - usernames: lowercase letters, digits, _ and -, max 32 characters
+#
+# username  public key
+alice   ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAliceAliceAliceAliceAliceAliceAliceAlice alice@laptop
+alice   ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAliceSecondKeyAliceSecondKeyAliceSecond alice@phone
+bob     ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQBobBobBobBobBobBobBobBobBobBob bob@desktop
+
+# carol has no key yet: the account is created but she cannot log in over SSH
+carol

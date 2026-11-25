@@ -1,0 +1,17 @@
+$ sudo ./bash/admin/provision-users.sh users.txt
+2026-11-25_01:09:28 ERROR: line 2: invalid username 'Bad_Name' (lowercase letters, digits, '_' and '-'; max 32)
+2026-11-25_01:09:28 ERROR: line 3: refusing to provision 'root'
+2026-11-25_01:09:28 ERROR: line 4: 'dave' has something that is not a supported SSH public key (private keys and key options are rejected)
+ERROR: 3 problem(s) in users.txt; nothing was changed
+
+$ echo $?
+1
+
+# The whole list is validated before anything is touched, so one typo on line 4
+# cannot leave you with half the users created. Line 1 was valid, and alice
+# was still not created.
+#
+# Also refused, with a per-user error and exit status 1 at the end:
+#   - an existing system account (uid below 1000), e.g. www-data
+#   - a user whose ~/.ssh or authorized_keys is a symlink
+# A failure for one user never stops the others.
